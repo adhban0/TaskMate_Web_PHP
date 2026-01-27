@@ -1,0 +1,383 @@
+<!-- =========================
+     TaskMate — Notes Manager
+     ========================= -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TaskMate — Notes</title>
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Font Awesome (optional) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    body { background: #f6f7fb; }
+    .card { border: 0; border-radius: 16px; }
+    .shadow-soft { box-shadow: 0 10px 30px rgba(0,0,0,.06); }
+    .text-muted-2 { color: #6b7280; }
+
+    .form-control:focus, .form-select:focus {
+      box-shadow: 0 0 0 .2rem rgba(17, 24, 39, .08);
+      border-color: rgba(17, 24, 39, .25);
+    }
+
+    .note-card {
+      border: 1px solid rgba(0,0,0,.06);
+      border-radius: 16px;
+      transition: transform .08s ease, box-shadow .08s ease;
+      cursor: pointer;
+      height: 100%;
+    }
+    .note-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 30px rgba(0,0,0,.08);
+    }
+    .pill {
+      border: 1px solid rgba(0,0,0,.10);
+      background: #fff;
+      border-radius: 999px;
+      padding: .35rem .6rem;
+      font-size: .85rem;
+      color: #111827;
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      white-space: nowrap;
+    }
+    .note-snippet {
+      color: #6b7280;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      min-height: 3.9em;
+    }
+    .kbd-hint {
+      font-size: .85rem;
+      color: #6b7280;
+      border: 1px solid rgba(0,0,0,.10);
+      background: #fff;
+      border-radius: 10px;
+      padding: .2rem .45rem;
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Top Navbar -->
+  <nav class="navbar navbar-expand-lg bg-white border-bottom">
+    <div class="container py-1">
+      <a class="navbar-brand fw-semibold" href="#">TaskMate</a>
+
+      <div class="d-flex gap-2 align-items-center">
+        <input class="form-control form-control-sm" style="width: 240px;" placeholder="Search notes..." />
+        <button class="btn btn-sm btn-outline-secondary">Notifications</button>
+        <div class="dropdown">
+          <button class="btn btn-sm btn-dark dropdown-toggle" data-bs-toggle="dropdown">Account</button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="#">Profile</a></li>
+            <li><a class="dropdown-item" href="#">Settings</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="#">Logout</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container my-4">
+    <!-- Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+      <div>
+        <h2 class="mb-1">Notes</h2>
+        <div class="text-muted-2">Organize ideas, study notes, and project drafts.</div>
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        <span class="kbd-hint"><i class="fa-solid fa-keyboard"></i> Ctrl + K</span>
+        <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#newNoteModal">
+          <i class="fa-solid fa-plus me-2"></i>New note
+        </button>
+      </div>
+    </div>
+
+    <div class="row g-3">
+      <!-- Left: Filters -->
+      <div class="col-12 col-lg-4">
+        <div class="card shadow-soft mb-3">
+          <div class="card-body">
+            <h5 class="mb-3">Filter</h5>
+
+            <div class="mb-2">
+              <label class="form-label small text-muted-2 mb-1">Folder</label>
+              <select class="form-select">
+                <option selected>All notes</option>
+                <option>University</option>
+                <option>Work</option>
+                <option>Personal</option>
+                <option>Drafts</option>
+              </select>
+            </div>
+
+            <div class="mb-2">
+              <label class="form-label small text-muted-2 mb-1">Tag</label>
+              <select class="form-select">
+                <option selected>Any</option>
+                <option>SQL</option>
+                <option>Web2</option>
+                <option>DevOps</option>
+                <option>Ideas</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small text-muted-2 mb-1">Sort</label>
+              <select class="form-select">
+                <option selected>Last updated</option>
+                <option>Created date</option>
+                <option>Title (A–Z)</option>
+              </select>
+            </div>
+
+            <div class="d-flex flex-wrap gap-2">
+              <button class="btn btn-sm btn-outline-secondary">All</button>
+              <button class="btn btn-sm btn-outline-secondary">Pinned</button>
+              <button class="btn btn-sm btn-outline-secondary">Shared</button>
+              <button class="btn btn-sm btn-outline-secondary">Archived</button>
+            </div>
+
+            <hr class="my-3" />
+
+            <div class="small text-muted-2">Quick tips</div>
+            <ul class="small text-muted-2 mb-0">
+              <li>Pin your most important notes.</li>
+              <li>Use tags for fast filtering.</li>
+              <li>Keep one note per topic.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card shadow-soft">
+          <div class="card-body">
+            <h5 class="mb-2">Storage</h5>
+            <div class="small text-muted-2 mb-2">12 notes • 3 folders • 6 tags</div>
+            <div class="progress" role="progressbar" aria-label="Storage used" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100">
+              <div class="progress-bar" style="width: 35%"></div>
+            </div>
+            <div class="small text-muted-2 mt-2">You’re using ~35% of your notes quota.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Notes grid -->
+      <div class="col-12 col-lg-8">
+        <div class="card shadow-soft">
+          <div class="card-body">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+              <h5 class="mb-0">All notes</h5>
+              <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-outline-secondary">
+                  <i class="fa-solid fa-list me-2"></i>List
+                </button>
+                <button class="btn btn-sm btn-outline-secondary">
+                  <i class="fa-solid fa-border-all me-2"></i>Grid
+                </button>
+              </div>
+            </div>
+
+            <div class="row g-3">
+              <!-- Note card -->
+              <div class="col-12 col-md-6">
+                <div class="note-card p-3 bg-white">
+                  <div class="d-flex justify-content-between align-items-start gap-2">
+                    <div>
+                      <div class="fw-semibold">Web2 — Form exam checklist</div>
+                      <div class="small text-muted-2">Updated: Today</div>
+                    </div>
+                    <span class="pill"><i class="fa-solid fa-thumbtack"></i>Pinned</span>
+                  </div>
+                  <div class="note-snippet mt-2">
+                    Fields: email, password, number… JS validation rules… PHP sanitize…
+                    Remember GET query string requirement…
+                  </div>
+                  <div class="d-flex flex-wrap gap-2 mt-3">
+                    <span class="pill"><i class="fa-solid fa-tag"></i>Web2</span>
+                    <span class="pill"><i class="fa-solid fa-folder"></i>University</span>
+                  </div>
+                  <div class="d-flex justify-content-end gap-2 mt-3">
+                    <button class="btn btn-sm btn-outline-secondary" title="Edit">
+                      <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" title="Delete">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Note card -->
+              <div class="col-12 col-md-6">
+                <div class="note-card p-3 bg-white">
+                  <div class="d-flex justify-content-between align-items-start gap-2">
+                    <div>
+                      <div class="fw-semibold">SQL — Window functions notes</div>
+                      <div class="small text-muted-2">Updated: 2 days ago</div>
+                    </div>
+                    <span class="pill"><i class="fa-regular fa-star"></i>Saved</span>
+                  </div>
+                  <div class="note-snippet mt-2">
+                    PARTITION BY vs GROUP BY: partition keeps rows, group reduces rows…
+                    ORDER BY in OVER() controls row order for ranking…
+                  </div>
+                  <div class="d-flex flex-wrap gap-2 mt-3">
+                    <span class="pill"><i class="fa-solid fa-tag"></i>SQL</span>
+                    <span class="pill"><i class="fa-solid fa-folder"></i>University</span>
+                  </div>
+                  <div class="d-flex justify-content-end gap-2 mt-3">
+                    <button class="btn btn-sm btn-outline-secondary" title="Edit">
+                      <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" title="Delete">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Note card -->
+              <div class="col-12 col-md-6">
+                <div class="note-card p-3 bg-white">
+                  <div class="d-flex justify-content-between align-items-start gap-2">
+                    <div>
+                      <div class="fw-semibold">TaskMate — Feature ideas</div>
+                      <div class="small text-muted-2">Updated: 1 week ago</div>
+                    </div>
+                    <span class="pill"><i class="fa-solid fa-lightbulb"></i>Idea</span>
+                  </div>
+                  <div class="note-snippet mt-2">
+                    Add AI summary widget… weekly review… export notes to PDF…
+                    calendar agenda view… tags & folders…
+                  </div>
+                  <div class="d-flex flex-wrap gap-2 mt-3">
+                    <span class="pill"><i class="fa-solid fa-tag"></i>Ideas</span>
+                    <span class="pill"><i class="fa-solid fa-folder"></i>Work</span>
+                  </div>
+                  <div class="d-flex justify-content-end gap-2 mt-3">
+                    <button class="btn btn-sm btn-outline-secondary" title="Edit">
+                      <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" title="Delete">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Note card -->
+              <div class="col-12 col-md-6">
+                <div class="note-card p-3 bg-white">
+                  <div class="d-flex justify-content-between align-items-start gap-2">
+                    <div>
+                      <div class="fw-semibold">DevOps — Backup checklist</div>
+                      <div class="small text-muted-2">Updated: 3 weeks ago</div>
+                    </div>
+                    <span class="pill"><i class="fa-solid fa-shield"></i>Checklist</span>
+                  </div>
+                  <div class="note-snippet mt-2">
+                    Verify pgBackRest restore… confirm rclone sync…
+                    test alerting rules… check disk usage…
+                  </div>
+                  <div class="d-flex flex-wrap gap-2 mt-3">
+                    <span class="pill"><i class="fa-solid fa-tag"></i>DevOps</span>
+                    <span class="pill"><i class="fa-solid fa-folder"></i>Work</span>
+                  </div>
+                  <div class="d-flex justify-content-end gap-2 mt-3">
+                    <button class="btn btn-sm btn-outline-secondary" title="Edit">
+                      <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" title="Delete">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Empty state (optional) -->
+            <!--
+            <div class="text-center py-5">
+              <div class="display-6 mb-2">🗒️</div>
+              <div class="fw-semibold">No notes yet</div>
+              <div class="text-muted-2">Create your first note to get started.</div>
+              <button class="btn btn-dark mt-3" data-bs-toggle="modal" data-bs-target="#newNoteModal">
+                <i class="fa-solid fa-plus me-2"></i>New note
+              </button>
+            </div>
+            -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- New Note Modal -->
+  <div class="modal fade" id="newNoteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius: 16px; border: 0;">
+        <div class="modal-header border-0">
+          <h5 class="modal-title">Create new note</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body pt-0">
+          <div class="mb-2">
+            <label class="form-label small text-muted-2 mb-1">Title</label>
+            <input class="form-control" placeholder="e.g., Web2 — Midterm checklist" />
+          </div>
+
+          <div class="row g-2">
+            <div class="col-6">
+              <label class="form-label small text-muted-2 mb-1">Folder</label>
+              <select class="form-select">
+                <option>University</option>
+                <option>Work</option>
+                <option>Personal</option>
+                <option>Drafts</option>
+              </select>
+            </div>
+            <div class="col-6">
+              <label class="form-label small text-muted-2 mb-1">Tag</label>
+              <select class="form-select">
+                <option>Web2</option>
+                <option>SQL</option>
+                <option>DevOps</option>
+                <option>Ideas</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mt-2">
+            <label class="form-label small text-muted-2 mb-1">Quick content</label>
+            <textarea class="form-control" rows="4" placeholder="Write something..."></textarea>
+          </div>
+
+          <div class="d-grid mt-3">
+            <button class="btn btn-dark" type="button">
+              <i class="fa-solid fa-plus me-2"></i>Create note
+            </button>
+          </div>
+          <div class="small text-muted-2 mt-2">
+            (Later connect this to PHP + DB, then redirect to the editor page.)
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
