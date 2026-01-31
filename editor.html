@@ -75,75 +75,7 @@
       </div>
     </div>
   </nav> -->
-<header>
-  <nav class="navbar navbar-expand-lg bg-white border-bottom">
-    <div class="container py-1">
-      <!-- Brand -->
-      <a class="navbar-brand fw-semibold d-flex align-items-center gap-2" href="dashboard.html">
-        <span class="d-inline-flex align-items-center justify-content-center"
-              style="width:38px;height:38px;border-radius:12px;background:#111827;color:#fff;">
-          <i class="fa-solid fa-check"></i>
-        </span>
-        <span>TaskMate</span>
-      </a>
 
-      <!-- Mobile toggle -->
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#taskmateNav"
-              aria-controls="taskmateNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <!-- Nav links -->
-      <div class="collapse navbar-collapse" id="taskmateNav">
-        <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-1">
-          <li class="nav-item">
-            <a class="nav-link" href="dashboard.html">
-              <i class="fa-solid fa-gauge-high me-1"></i>Dashboard
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="todo.html">
-              <i class="fa-regular fa-square-check me-1"></i>To-do
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="calendar.html">
-              <i class="fa-regular fa-calendar me-1"></i>Calendar
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="notes.html">
-              <i class="fa-regular fa-note-sticky me-1"></i>Notes
-            </a>
-          </li>
-        </ul>
-
-        <!-- Right side -->
-        <div class="d-flex align-items-center gap-2">
-          <input class="form-control form-control-sm d-none d-md-block"
-                 style="width:220px;"
-                 placeholder="Search…" />
-
-          <button class="btn btn-sm btn-outline-secondary" title="Notifications">
-            <i class="fa-regular fa-bell"></i>
-          </button>
-
-          <div class="dropdown">
-            <button class="btn btn-sm btn-dark dropdown-toggle" data-bs-toggle="dropdown">
-              Account
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end">
-              <li><a class="dropdown-item" href="profile.html">Profile</a></li>
-              <li><a class="dropdown-item" href="settings.html">Settings</a></li>
-              <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item text-danger" href="logout.php">Logout</a></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  </nav>
-</header>
 
   <main class="container my-4">
     <!-- Header -->
@@ -159,10 +91,7 @@
       </div>
 
       <div class="d-flex flex-wrap gap-2 align-items-center">
-        <span class="pill"><i class="fa-regular fa-clock"></i>Last saved: just now</span>
-        <button class="btn btn-outline-secondary">
-          <i class="fa-regular fa-eye me-2"></i>Preview
-        </button>
+        
         <button class="btn btn-dark">
           <i class="fa-regular fa-floppy-disk me-2"></i>Save
         </button>
@@ -181,17 +110,7 @@
             </div>
 
             <!-- Toolbar (simple UI; later you can wire buttons with JS) -->
-            <div class="d-flex flex-wrap gap-2 mb-3">
-              <button class="toolbar-btn" type="button" title="Bold"><i class="fa-solid fa-bold"></i></button>
-              <button class="toolbar-btn" type="button" title="Italic"><i class="fa-solid fa-italic"></i></button>
-              <button class="toolbar-btn" type="button" title="Underline"><i class="fa-solid fa-underline"></i></button>
-              <span class="pill"><i class="fa-solid fa-grip-lines-vertical"></i> </span>
-              <button class="toolbar-btn" type="button" title="Bullet list"><i class="fa-solid fa-list-ul"></i></button>
-              <button class="toolbar-btn" type="button" title="Numbered list"><i class="fa-solid fa-list-ol"></i></button>
-              <button class="toolbar-btn" type="button" title="Code"><i class="fa-solid fa-code"></i></button>
-              <button class="toolbar-btn" type="button" title="Link"><i class="fa-solid fa-link"></i></button>
-              <button class="toolbar-btn" type="button" title="Checklist"><i class="fa-regular fa-square-check"></i></button>
-            </div>
+           
 
             <!-- Editor area -->
             <label class="form-label small text-muted-2 mb-1">Content</label>
@@ -214,124 +133,16 @@
 - Confirm success message & redirect
             </textarea>
 
-            <div class="small text-muted-2 mt-3">
-              Tip: Later you can replace this textarea with a rich editor (contenteditable) if you want.
-            </div>
+            
           </div>
         </div>
       </div>
 
       <!-- Right panel -->
-      <div class="col-12 col-lg-4">
-        <!-- Note settings -->
-        <div class="card shadow-soft mb-3">
-          <div class="card-body">
-            <h5 class="mb-3">Note settings</h5>
-
-            <div class="mb-2">
-              <label class="form-label small text-muted-2 mb-1">Folder</label>
-              <select class="form-select">
-                <option selected>University</option>
-                <option>Work</option>
-                <option>Personal</option>
-                <option>Drafts</option>
-              </select>
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label small text-muted-2 mb-1">Tag</label>
-              <select class="form-select">
-                <option selected>Web2</option>
-                <option>SQL</option>
-                <option>DevOps</option>
-                <option>Ideas</option>
-              </select>
-            </div>
-
-            <div class="d-flex flex-wrap gap-2">
-              <button class="btn btn-sm btn-outline-secondary">
-                <i class="fa-solid fa-thumbtack me-2"></i>Pin
-              </button>
-              <button class="btn btn-sm btn-outline-secondary">
-                <i class="fa-solid fa-box-archive me-2"></i>Archive
-              </button>
-              <button class="btn btn-sm btn-outline-danger">
-                <i class="fa-solid fa-trash me-2"></i>Delete
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- AI helper -->
-        <div class="card shadow-soft">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-              <h5 class="mb-0">AI helper</h5>
-              <span class="badge text-bg-dark">Beta</span>
-            </div>
-
-            <div class="small text-muted-2 mb-2">Quick actions:</div>
-
-            <div class="d-grid gap-2">
-              <button class="btn btn-outline-dark">
-                <i class="fa-solid fa-wand-magic-sparkles me-2"></i>Summarize note
-              </button>
-              <button class="btn btn-outline-dark">
-                <i class="fa-solid fa-check-double me-2"></i>Turn into checklist
-              </button>
-              <button class="btn btn-outline-dark">
-                <i class="fa-solid fa-language me-2"></i>Translate (AR/EN)
-              </button>
-              <button class="btn btn-outline-dark">
-                <i class="fa-solid fa-pen-to-square me-2"></i>Improve writing
-              </button>
-            </div>
-
-            <hr class="my-3" />
-
-            <div class="small text-muted-2">Suggestion</div>
-            <div class="p-3 bg-white border rounded-3">
-              <div class="fw-semibold">Add a “Test cases” section</div>
-              <div class="small text-muted-2">
-                List exact inputs for valid/invalid email and passwords. Helps in exams.
-              </div>
-            </div>
-
-            <div class="small text-muted-2 mt-2">
-              (Later these buttons call your PHP endpoint that talks to your AI model.)
-            </div>
-          </div>
-        </div>
-      </div>
+      
     </div>
   </main>
-<footer class="border-top bg-white">
-  <div class="container py-4">
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
-      <div class="d-flex align-items-center gap-2">
-        <span class="fw-semibold">TaskMate</span>
-        <span class="text-muted-2 small">© <span id="tmYear"></span> All rights reserved.</span>
-      </div>
 
-      <div class="d-flex flex-wrap justify-content-center gap-3 small">
-        <a href="#" class="text-decoration-none text-muted-2">Dashboard</a>
-        <a href="#" class="text-decoration-none text-muted-2">To-do</a>
-        <a href="#" class="text-decoration-none text-muted-2">Calendar</a>
-        <a href="#" class="text-decoration-none text-muted-2">Notes</a>
-        <a href="#" class="text-decoration-none text-muted-2">Settings</a>
-      </div>
-
-      <div class="small text-muted-2">
-        Made with <span aria-hidden="true">☕</span> for productivity
-      </div>
-    </div>
-  </div>
-</footer>
-
-<script>
-  // Footer year
-  document.getElementById("tmYear").textContent = new Date().getFullYear();
-</script>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

@@ -99,25 +99,7 @@
 
 <body>
   <!-- Top Navbar (matches other pages) -->
-  <nav class="navbar navbar-expand-lg bg-white border-bottom">
-    <div class="container py-1">
-      <a class="navbar-brand fw-semibold" href="#">TaskMate</a>
-
-      <div class="d-flex gap-2 align-items-center">
-        <input class="form-control form-control-sm" style="width: 240px;" placeholder="Search events..." />
-        <button class="btn btn-sm btn-outline-secondary">Notifications</button>
-        <div class="dropdown">
-          <button class="btn btn-sm btn-dark dropdown-toggle" data-bs-toggle="dropdown">Account</button>
-          <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="#">Profile</a></li>
-            <li><a class="dropdown-item" href="#">Settings</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item text-danger" href="#">Logout</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </nav>
+ 
 
   <main class="container my-4">
     <!-- Header -->
@@ -157,15 +139,7 @@
                   <span id="monthTitle">—</span>
                 </div>
 
-                <select class="form-select form-select-sm" style="width: 140px;">
-                  <option selected>Month</option>
-                  <option>Week</option>
-                  <option>Day</option>
-                </select>
-
-                <button class="btn btn-outline-dark btn-sm" data-bs-toggle="modal" data-bs-target="#addEventModal">
-                  <i class="fa-solid fa-plus me-2"></i>Add event
-                </button>
+                
               </div>
             </div>
 
@@ -185,9 +159,7 @@
               <!-- Filled by JS -->
             </div>
 
-            <div class="small text-muted-2 mt-3">
-              Tip: Click any day later (when you add JS logic) to open a day view or create an event.
-            </div>
+            
           </div>
         </div>
       </div>
@@ -208,7 +180,6 @@
                     <div class="fw-semibold">Team check-in</div>
                     <div class="small text-muted-2">Today • 8:30 PM</div>
                   </div>
-                  <span class="pill"><span class="dot"></span>Meeting</span>
                 </div>
               </div>
 
@@ -218,7 +189,6 @@
                     <div class="fw-semibold">Study block (Algorithms)</div>
                     <div class="small text-muted-2">Tue • 6:00 PM</div>
                   </div>
-                  <span class="pill"><span class="dot"></span>Study</span>
                 </div>
               </div>
 
@@ -228,7 +198,6 @@
                     <div class="fw-semibold">Client call</div>
                     <div class="small text-muted-2">Wed • 5:00 PM</div>
                   </div>
-                  <span class="pill"><span class="dot"></span>Work</span>
                 </div>
               </div>
 
@@ -238,222 +207,376 @@
                     <div class="fw-semibold">Maintenance window</div>
                     <div class="small text-muted-2">Thu • 11:00 PM</div>
                   </div>
-                  <span class="pill"><span class="dot"></span>Ops</span>
                 </div>
               </div>
             </div>
 
             <div class="d-grid mt-3">
-              <button class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#addEventModal">
-                <i class="fa-solid fa-plus me-2"></i>Add event
-              </button>
+              <button class="btn btn-outline-dark" id="agendaAddBtn">
+  <i class="fa-solid fa-plus me-2"></i>Add event
+</button>
+
             </div>
           </div>
         </div>
 
-        <div class="card shadow-soft">
-          <div class="card-body">
-            <h5 class="mb-2">Quick filters</h5>
-            <div class="d-flex flex-wrap gap-2">
-              <button class="btn btn-sm btn-outline-secondary">All</button>
-              <button class="btn btn-sm btn-outline-secondary">Meetings</button>
-              <button class="btn btn-sm btn-outline-secondary">Study</button>
-              <button class="btn btn-sm btn-outline-secondary">Work</button>
-              <button class="btn btn-sm btn-outline-secondary">Personal</button>
-            </div>
-
-            <hr class="my-3" />
-
-            <div class="small text-muted-2">Upcoming deadline</div>
-            <div class="fw-semibold">Web2 form demo</div>
-            <div class="small text-muted-2">Tomorrow • Submit before midnight</div>
-          </div>
-        </div>
+        
       </div>
     </div>
   </main>
 
   <!-- Add Event Modal -->
-  <div class="modal fade" id="addEventModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content" style="border-radius: 16px; border: 0;">
-        <div class="modal-header border-0">
-          <h5 class="modal-title">Add event</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  <!-- Add Event Modal -->
+<div class="modal fade" id="addEventModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius: 16px; border: 0;">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="eventModalTitle">Add event</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body pt-0">
+        <!-- mode + key (used when editing) -->
+        <input type="hidden" id="eventMode" value="create" />
+        <input type="hidden" id="eventKey" value="" /> <!-- YYYY-MM-DD|index -->
+
+        <div class="mb-2">
+          <label class="form-label small text-muted-2 mb-1">Title</label>
+          <input id="eventTitle" class="form-control" placeholder="e.g., Client call" />
         </div>
-        <div class="modal-body pt-0">
-          <div class="mb-2">
-            <label class="form-label small text-muted-2 mb-1">Title</label>
-            <input class="form-control" placeholder="e.g., Client call" />
-          </div>
 
-          <div class="row g-2">
-            <div class="col-6">
-              <label class="form-label small text-muted-2 mb-1">Date</label>
-              <input type="date" class="form-control" />
-            </div>
-            <div class="col-6">
-              <label class="form-label small text-muted-2 mb-1">Time</label>
-              <input type="time" class="form-control" />
-            </div>
+        <div class="row g-2">
+          <div class="col-6">
+            <label class="form-label small text-muted-2 mb-1">Date</label>
+            <input id="eventDate" type="date" class="form-control" />
           </div>
+          <div class="col-6">
+            <label class="form-label small text-muted-2 mb-1">Time</label>
+            <input id="eventTime" type="time" class="form-control" />
+          </div>
+        </div>
 
-          <div class="mt-2">
-            <label class="form-label small text-muted-2 mb-1">Category</label>
-            <select class="form-select">
-              <option>Meeting</option>
-              <option>Study</option>
-              <option>Work</option>
-              <option>Personal</option>
-              <option>Ops</option>
-            </select>
-          </div>
+        <div class="mt-2">
+          <label class="form-label small text-muted-2 mb-1">Notes (optional)</label>
+          <textarea id="eventNotes" class="form-control" rows="3" placeholder="Add details..."></textarea>
+        </div>
 
-          <div class="mt-2">
-            <label class="form-label small text-muted-2 mb-1">Notes (optional)</label>
-            <textarea class="form-control" rows="3" placeholder="Add details..."></textarea>
-          </div>
-
-          <div class="d-grid mt-3">
-            <button class="btn btn-dark" type="button">
-              <i class="fa-solid fa-plus me-2"></i>Create event
-            </button>
-          </div>
-          <div class="small text-muted-2 mt-2">
-            (Later you’ll connect this button to PHP to save into your database.)
-          </div>
+        <div class="d-grid mt-3">
+          <button class="btn btn-dark" id="eventSaveBtn" type="button">
+            <i class="fa-solid fa-plus me-2"></i><span id="eventSaveText">Create event</span>
+          </button>
         </div>
       </div>
     </div>
   </div>
+</div>
+
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    // Minimal month calendar rendering (no backend needed)
-    const calGrid = document.getElementById("calGrid");
-    const monthTitle = document.getElementById("monthTitle");
-    const todayDate = document.getElementById("todayDate");
+<script>
+  const calGrid = document.getElementById("calGrid");
+  const monthTitle = document.getElementById("monthTitle");
+  const todayDate = document.getElementById("todayDate");
 
-    // Demo events (you will replace with DB later)
-    // Key format: YYYY-MM-DD
-    const events = {
-      "2026-01-26": [
-        { title: "Team check-in", type: "Meeting" },
-      ],
-      "2026-01-28": [
-        { title: "Client call", type: "Work" },
-      ],
-      "2026-01-29": [
-        { title: "Maintenance", type: "Ops" },
-      ]
-    };
+  // Modal elements
+  const addEventModalEl = document.getElementById("addEventModal");
+  const addEventModal = new bootstrap.Modal(addEventModalEl);
 
-    const typeDot = (type) => {
-      // No custom colors requested, keeping a single dot style
-      return '<span class="dot"></span>';
-    };
+  const eventModalTitle = document.getElementById("eventModalTitle");
+  const eventMode = document.getElementById("eventMode");
+  const eventKey = document.getElementById("eventKey");
 
-    let view = new Date(); // current month view
+  const eventTitle = document.getElementById("eventTitle");
+  const eventDate  = document.getElementById("eventDate");
+  const eventTime  = document.getElementById("eventTime");
+  const eventNotes = document.getElementById("eventNotes");
 
-    function pad(n){ return String(n).padStart(2,"0"); }
-    function ymd(d){
-      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  const eventSaveBtn = document.getElementById("eventSaveBtn");
+  const eventSaveText = document.getElementById("eventSaveText");
+
+  // Demo events (now includes time + notes so edit makes sense)
+  // Key format: YYYY-MM-DD
+  const events = {
+    "2026-01-26": [
+      { title: "Team check-in", type: "Meeting", time: "20:30", notes: "" },
+    ],
+    "2026-01-28": [
+      { title: "Client call", type: "Work", time: "17:00", notes: "" },
+    ],
+    "2026-01-29": [
+      { title: "Maintenance", type: "Ops", time: "23:00", notes: "Prepare checklist" },
+    ]
+  };
+
+  const typeDot = () => '<span class="dot"></span>';
+// Creates a Date object for the current date & time
+  let view = new Date();
+// Converts a number into a 2-digit string
+// Adds a leading 0 if needed
+  function pad(n){ return String(n).padStart(2,"0"); }
+//   Takes a Date object d
+
+// Returns a string in YYYY-MM-DD format
+
+// 🔹 Key details:
+
+// getMonth() starts at 0 → January = 0
+// 👉 so we add +1
+  function ymd(d){
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  }
+
+  function renderTodayLabel(){
+    const d = new Date();
+    todayDate.textContent = d.toLocaleDateString(undefined, {
+      weekday: "long", year: "numeric", month: "long", day: "numeric"
+    });
+  }
+
+  function setModalCreateMode(dateStr){
+    eventMode.value = "create";
+    eventKey.value = "";
+
+    eventModalTitle.textContent = "Add event";
+    eventSaveText.textContent = "Create event";
+    eventSaveBtn.querySelector("i").className = "fa-solid fa-plus me-2";
+
+    eventTitle.value = "";
+    eventDate.value = dateStr || "";
+    eventTime.value = "";
+    eventNotes.value = "";
+  }
+
+  function setModalEditMode(dateStr, index){
+    const ev = (events[dateStr] || [])[index];
+    if(!ev) return;
+
+    eventMode.value = "edit";
+    eventKey.value = `${dateStr}|${index}`;
+
+    eventModalTitle.textContent = "Edit event";
+    eventSaveText.textContent = "Save changes";
+    eventSaveBtn.querySelector("i").className = "fa-solid fa-floppy-disk me-2";
+
+    eventTitle.value = ev.title || "";
+    eventDate.value = dateStr;
+    eventTime.value = ev.time || "";
+    eventNotes.value = ev.notes || "";
+  }
+
+  function openModalForAdd(dateStr){
+    setModalCreateMode(dateStr);
+    addEventModal.show();
+    // focus title for quick typing
+    setTimeout(() => eventTitle.focus(), 150);
+  }
+
+  function openModalForEdit(dateStr, index){
+    setModalEditMode(dateStr, index);
+    addEventModal.show();
+    setTimeout(() => eventTitle.focus(), 150);
+  }
+
+  function renderCalendar(){
+    calGrid.innerHTML = "";
+
+    const year = view.getFullYear();
+    const month = view.getMonth();
+
+    monthTitle.textContent = view.toLocaleDateString(undefined, { month: "long", year: "numeric" });
+// Creates date for the 1st of the month. 
+    const first = new Date(year, month, 1);
+//     startDow = day of week (0–6) for that first day:
+// 0 Sunday, 1 Monday, … 6 Saturday
+    const startDow = first.getDay();
+//     day 0 of “next month” = last day of current month
+
+// So .getDate() gives how many days are in this month (28–31).
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    // previous month padding
+
+    // Number of days in the previous month.
+    const prevDays = new Date(year, month, 0).getDate();
+// Creates the “muted” days before the 1st.
+
+// Example: If the 1st is Thursday, you need Sun/Mon/Tue/Wed from previous month.
+
+// dayCell(cellDate, true) means: build a muted cell.
+    for(let i = startDow - 1; i >= 0; i--){
+      const dayNum = prevDays - i;
+      const cellDate = new Date(year, month - 1, dayNum);
+      calGrid.appendChild(dayCell(cellDate, true));
+    }
+// Adds day 1..end for the current month (not muted).
+    // current month
+    for(let d = 1; d <= daysInMonth; d++){
+      const cellDate = new Date(year, month, d);
+      calGrid.appendChild(dayCell(cellDate, false));
     }
 
-    function renderTodayLabel(){
-      const d = new Date();
-      todayDate.textContent = d.toLocaleDateString(undefined, {
-        weekday: "long", year: "numeric", month: "long", day: "numeric"
-      });
+    // next month padding (always 6 rows / 42 cells)
+
+    // Checks how many cells are already made, and how many more to reach 42.
+    const totalCells = calGrid.children.length;
+    const remaining = 42 - totalCells;
+    // Adds muted cells from next month to fill the grid.
+    for(let d = 1; d <= remaining; d++){
+      const cellDate = new Date(year, month + 1, d);
+      calGrid.appendChild(dayCell(cellDate, true));
     }
+  }
 
-    function renderCalendar(){
-      calGrid.innerHTML = "";
+  function dayCell(dateObj, isMuted){
+    const div = document.createElement("div");
+    div.className = "cal-day" + (isMuted ? " muted" : "");
 
-      const year = view.getFullYear();
-      const month = view.getMonth();
+//     Detects if this cell’s date is today.
 
-      monthTitle.textContent = view.toLocaleDateString(undefined, { month: "long", year: "numeric" });
+// If yes, and it’s not muted, add the today class (highlight).
+    const today = new Date();
+    const isToday = dateObj.toDateString() === today.toDateString();
+    if(isToday && !isMuted) div.classList.add("today");
 
-      const first = new Date(year, month, 1);
-      const startDow = first.getDay(); // 0=Sun
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-      // previous month padding
-      const prevDays = new Date(year, month, 0).getDate();
-      for(let i = startDow - 1; i >= 0; i--){
-        const dayNum = prevDays - i;
-        const cellDate = new Date(year, month - 1, dayNum);
-        calGrid.appendChild(dayCell(cellDate, true));
-      }
-
-      // current month
-      for(let d = 1; d <= daysInMonth; d++){
-        const cellDate = new Date(year, month, d);
-        calGrid.appendChild(dayCell(cellDate, false));
-      }
-
-      // next month padding to fill 6 rows (42 cells) nicely
-      const totalCells = calGrid.children.length;
-      const remaining = (totalCells <= 35) ? (42 - totalCells) : (42 - totalCells); // keep 6 rows always
-      for(let d = 1; d <= remaining; d++){
-        const cellDate = new Date(year, month + 1, d);
-        calGrid.appendChild(dayCell(cellDate, true));
-      }
-    }
-
-    function dayCell(dateObj, isMuted){
-      const div = document.createElement("div");
-      div.className = "cal-day" + (isMuted ? " muted" : "");
-
-      const today = new Date();
-      const isToday = dateObj.toDateString() === today.toDateString();
-      if(isToday && !isMuted) div.classList.add("today");
-
-      div.innerHTML = `<div class="d-flex justify-content-between align-items-start">
+    const key = ymd(dateObj);
+// data-date="${key}" stores the date for that day
+    div.innerHTML = `
+      <div class="d-flex justify-content-between align-items-start">
         <div class="num">${dateObj.getDate()}</div>
-        <button class="btn btn-sm btn-outline-secondary py-0 px-2" title="Add">
+        <button
+          class="btn btn-sm btn-outline-secondary py-0 px-2"
+          title="Add"
+          data-action="add"
+          data-date="${key}">
           <i class="fa-solid fa-plus"></i>
         </button>
-      </div>`;
+      </div>
+    `;
 
-      // demo events for this date
-      const key = ymd(dateObj);
-      const dayEvents = events[key] || [];
-      dayEvents.slice(0, 3).forEach(e => {
-        const chip = document.createElement("div");
-        chip.className = "chip";
-        chip.innerHTML = `${typeDot(e.type)}<span class="text-truncate">${e.title}</span>`;
-        div.appendChild(chip);
-      });
-
-      // if more than 3
-      if(dayEvents.length > 3){
-        const more = document.createElement("div");
-        more.className = "small text-muted-2 mt-2";
-        more.textContent = `+${dayEvents.length - 3} more`;
-        div.appendChild(more);
-      }
-
-      return div;
+    const dayEvents = events[key] || [];
+    // Takes only first 3 events (slice = Takes a copy of part of the array) and loops them.
+    // e -> object. idx -> index of object
+    dayEvents.slice(0, 3).forEach((e, idx) => {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "chip text-start";
+      chip.setAttribute("data-action", "edit");
+      chip.setAttribute("data-date", key);
+      // data-index is which event in that day’s array.
+      chip.setAttribute("data-index", String(idx));
+      // Shows dot + event title
+      chip.innerHTML = `${typeDot()}<span class="text-truncate">${e.title}</span>`;
+      div.appendChild(chip);
+    });
+// “+X more” if there are more than 3
+    if(dayEvents.length > 3){
+      const more = document.createElement("div");
+      more.className = "small text-muted-2 mt-2";
+      more.textContent = `+${dayEvents.length - 3} more`;
+      div.appendChild(more);
     }
 
-    document.getElementById("prevBtn").addEventListener("click", () => {
-      view = new Date(view.getFullYear(), view.getMonth() - 1, 1);
-      renderCalendar();
-    });
-    document.getElementById("nextBtn").addEventListener("click", () => {
-      view = new Date(view.getFullYear(), view.getMonth() + 1, 1);
-      renderCalendar();
-    });
-    document.getElementById("todayBtn").addEventListener("click", () => {
-      const t = new Date();
-      view = new Date(t.getFullYear(), t.getMonth(), 1);
-      renderCalendar();
-    });
+    return div;
+  }
 
-    renderTodayLabel();
+  // (1) + button and (2) chip click handling (event delegation)
+  calGrid.addEventListener("click", (e) => {
+    // It uses .closest("[data-action]") to find the nearest clicked element that has data-action
+    const btn = e.target.closest("[data-action]");
+    if(!btn) return;
+
+    const action = btn.getAttribute("data-action");
+    const dateStr = btn.getAttribute("data-date");
+
+    if(action === "add"){
+      openModalForAdd(dateStr);
+    }
+
+    if(action === "edit"){
+      const index = Number(btn.getAttribute("data-index"));
+      openModalForEdit(dateStr, index);
+    }
+  });
+document.getElementById("agendaAddBtn").addEventListener("click", () => {
+  // optional: default to today’s date
+  const todayStr = ymd(new Date());
+  setModalCreateMode(todayStr);
+  addEventModal.show();
+});
+
+  // Save (create/edit)
+  eventSaveBtn.addEventListener("click", () => {
+    const title = eventTitle.value.trim();
+    const dateStr = eventDate.value; // YYYY-MM-DD
+    const time = eventTime.value;    // HH:MM
+    const notes = eventNotes.value.trim();
+
+    if(!title){
+      eventTitle.focus();
+      return;
+    }
+    if(!dateStr){
+      eventDate.focus();
+      return;
+    }
+
+    if(eventMode.value === "create"){
+//       Ensures there is an array for that date.
+
+// Adds a new event object.
+      if(!events[dateStr]) events[dateStr] = [];
+      events[dateStr].push({
+        title,
+        type: "General",
+        time: time || "",
+        notes: notes || ""
+      });
+    } else {
+      // Splits "YYYY-MM-DD|index" into oldDate and idx.
+      const [oldDate, idxStr] = eventKey.value.split("|");
+      const idx = Number(idxStr);
+
+      const ev = (events[oldDate] || [])[idx];
+      if(!ev) return;
+
+      // if date changed, move event
+      if(oldDate !== dateStr){
+        // remove from old date (take 1 element starting at index) (⚠️ splice MUTATES the array)
+        events[oldDate].splice(idx, 1);
+        if(events[oldDate].length === 0) delete events[oldDate];
+
+        // add to new date
+        if(!events[dateStr]) events[dateStr] = [];
+        events[dateStr].push(ev);
+      }
+
+      ev.title = title;
+      ev.time = time || "";
+      ev.notes = notes || "";
+    }
+
+    addEventModal.hide();
     renderCalendar();
-  </script>
+  });
+
+  // Toolbar
+  document.getElementById("prevBtn").addEventListener("click", () => {
+    view = new Date(view.getFullYear(), view.getMonth() - 1, 1);
+    renderCalendar();
+  });
+  document.getElementById("nextBtn").addEventListener("click", () => {
+    view = new Date(view.getFullYear(), view.getMonth() + 1, 1);
+    renderCalendar();
+  });
+  document.getElementById("todayBtn").addEventListener("click", () => {
+    const t = new Date();
+    view = new Date(t.getFullYear(), t.getMonth(), 1);
+    renderCalendar();
+  });
+
+  renderTodayLabel();
+  renderCalendar();
+</script>
+  
 </body>
 </html>

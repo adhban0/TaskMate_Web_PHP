@@ -8,7 +8,7 @@
   <!-- Bootstrap 5 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
 
-  <!-- Font Awesome (optional, for icons) -->
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
   <style>
@@ -17,14 +17,10 @@
     .shadow-soft { box-shadow: 0 10px 30px rgba(0,0,0,.06); }
     .text-muted-2 { color: #6b7280; }
 
-    /* Todo row styling */
     .todo-item { border: 1px solid rgba(0,0,0,.06); border-radius: 14px; }
     .todo-item + .todo-item { margin-top: 12px; }
-
-    /* Checkbox size a bit nicer */
     .form-check-input { width: 1.2em; height: 1.2em; }
 
-    /* Small “pill” label */
     .pill {
       border: 1px solid rgba(0,0,0,.10);
       background: #fff;
@@ -38,38 +34,19 @@
       white-space: nowrap;
     }
 
-    /* Make input feel like the dashboard */
     .form-control:focus, .form-select:focus {
       box-shadow: 0 0 0 .2rem rgba(17, 24, 39, .08);
       border-color: rgba(17, 24, 39, .25);
     }
+
+    /* Small helper so edit fields don’t look huge */
+    .edit-fields { margin-top: .35rem; }
+    .edit-fields .form-control { height: 34px; padding-top: .25rem; padding-bottom: .25rem; }
   </style>
 </head>
 
 <body>
-  <!-- Top Navbar (same theme) -->
-  <nav class="navbar navbar-expand-lg bg-white border-bottom">
-    <div class="container py-1">
-      <a class="navbar-brand fw-semibold" href="#">TaskMate</a>
-
-      <div class="d-flex gap-2 align-items-center">
-        <input class="form-control form-control-sm" style="width: 240px;" placeholder="Search tasks..." />
-        <button class="btn btn-sm btn-outline-secondary">Notifications</button>
-        <div class="dropdown">
-          <button class="btn btn-sm btn-dark dropdown-toggle" data-bs-toggle="dropdown">Account</button>
-          <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="#">Profile</a></li>
-            <li><a class="dropdown-item" href="#">Settings</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item text-danger" href="#">Logout</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </nav>
-
   <main class="container my-4">
-    <!-- Page header -->
     <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
       <div>
         <h2 class="mb-1">To-do list</h2>
@@ -82,9 +59,7 @@
     </div>
 
     <div class="row g-3">
-      <!-- Left: Add + Filters -->
       <div class="col-12 col-lg-4">
-        <!-- Add task -->
         <div class="card shadow-soft mb-3">
           <div class="card-body">
             <h5 class="mb-3">Add new task</h5>
@@ -97,51 +72,12 @@
             <div class="mb-3">
               <label class="form-label small text-muted-2 mb-1">Due date (optional)</label>
               <input type="date" class="form-control" />
+              <label class="form-label small text-muted-2 mb-1" style="text-decoration: underline;cursor: pointer;">Clear due date</label>
             </div>
 
             <div class="d-grid">
               <button class="btn btn-dark">
                 <i class="fa-solid fa-plus me-2"></i>Add task
-              </button>
-            </div>
-
-            <div class="small text-muted-2 mt-3">
-              Tip: Keep tasks short. Add details inside the task page later.
-            </div>
-          </div>
-        </div>
-
-        <!-- Filters -->
-        <div class="card shadow-soft">
-          <div class="card-body">
-            <h5 class="mb-3">Filter & sort</h5>
-
-            <div class="mb-2">
-              <label class="form-label small text-muted-2 mb-1">Filter</label>
-              <select class="form-select">
-                <option>All</option>
-                <option>Active</option>
-                <option>Completed</option>
-                <option>Has due date</option>
-                <option>Overdue</option>
-              </select>
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label small text-muted-2 mb-1">Sort</label>
-              <select class="form-select">
-                <option>Added date</option>
-                <option>Due date</option>
-                <option>Priority</option>
-              </select>
-            </div>
-
-            <div class="d-flex gap-2">
-              <button class="btn btn-outline-secondary w-100">
-                <i class="fa-solid fa-arrow-up-wide-short me-2"></i>Ascending
-              </button>
-              <button class="btn btn-outline-secondary w-100">
-                <i class="fa-solid fa-arrow-down-wide-short me-2"></i>Descending
               </button>
             </div>
           </div>
@@ -155,6 +91,11 @@
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
               <h5 class="mb-0">Your tasks</h5>
               <div class="d-flex gap-2">
+                <select class="form-select">
+                  <option>All</option>
+                  <option>Active</option>
+                  <option>Completed</option>
+                </select>
                 <button class="btn btn-sm btn-outline-secondary">Mark done</button>
                 <button class="btn btn-sm btn-outline-danger">Delete</button>
               </div>
@@ -167,17 +108,29 @@
                   <div class="form-check mt-1">
                     <input class="form-check-input" type="checkbox" checked />
                   </div>
-                  <div>
-                    <div class="fw-semibold text-decoration-line-through">Buy groceries for next week</div>
-                    <div class="small text-muted-2">Created: 28 Jun 2020</div>
+
+                  <!-- ✅ Added: wrap title so JS can find it reliably -->
+                  <div class="todo-content">
+                    <div class="fw-semibold text-decoration-line-through todo-title">Buy groceries for next week</div>
+
+                    <!-- ✅ Added: hidden edit fields (title + due date) -->
+                    <div class="edit-fields d-none">
+                      <input type="text" class="form-control form-control-sm mb-2 edit-title" />
+                      <input type="date" class="form-control form-control-sm edit-date" />
+                    </div>
                   </div>
                 </div>
 
                 <div class="d-flex align-items-center gap-2">
-                  <span class="pill"><i class="fa-regular fa-circle-check"></i>Completed</span>
-                  <button class="btn btn-sm btn-outline-secondary" title="Edit">
+                  <button class="btn btn-sm btn-outline-secondary" title="Check">
+                    <i class="fa-solid fa-check"></i>
+                  </button>
+
+                  <!-- ✅ Added class for JS -->
+                  <button class="btn btn-sm btn-outline-secondary btn-edit" title="Edit">
                     <i class="fa-solid fa-pen"></i>
                   </button>
+
                   <button class="btn btn-sm btn-outline-danger" title="Delete">
                     <i class="fa-solid fa-trash"></i>
                   </button>
@@ -192,24 +145,32 @@
                   <div class="form-check mt-1">
                     <input class="form-check-input" type="checkbox" />
                   </div>
-                  <div>
-                    <div class="fw-semibold">Renew car insurance</div>
-                    <div class="small text-muted-2">Created: 28 Jun 2020</div>
+
+                  <div class="todo-content">
+                    <div class="fw-semibold todo-title">Renew car insurance</div>
+
+                    <div class="edit-fields d-none">
+                      <input type="text" class="form-control form-control-sm mb-2 edit-title" />
+                      <input type="date" class="form-control form-control-sm edit-date" />
+                    </div>
                   </div>
                 </div>
 
                 <div class="d-flex flex-wrap align-items-center justify-content-end gap-2">
-                  <span class="pill">
+                  <!-- ✅ Added class for JS -->
+                  <span class="pill todo-due">
                     <i class="fa-regular fa-hourglass-half"></i>
-                    Due: 28 Jun 2020
+                    <span class="due-text">Due: 28 Jun 2020</span>
                   </span>
-                  <span class="pill">
-                    <i class="fa-solid fa-flag"></i>
-                    Priority: Medium
-                  </span>
-                  <button class="btn btn-sm btn-outline-secondary" title="Edit">
+
+                  <button class="btn btn-sm btn-outline-secondary" title="Check">
+                    <i class="fa-solid fa-check"></i>
+                  </button>
+
+                  <button class="btn btn-sm btn-outline-secondary btn-edit" title="Edit">
                     <i class="fa-solid fa-pen"></i>
                   </button>
+
                   <button class="btn btn-sm btn-outline-danger" title="Delete">
                     <i class="fa-solid fa-trash"></i>
                   </button>
@@ -224,14 +185,26 @@
                   <div class="form-check mt-1">
                     <input class="form-check-input" type="checkbox" />
                   </div>
-                  <div>
-                    <div class="fw-semibold">Sign up for online course</div>
-                    <div class="small text-muted-2">Created: 28 Jun 2020</div>
+
+                  <div class="todo-content">
+                    <div class="fw-semibold todo-title">Sign up for online course</div>
+
+                    <div class="edit-fields d-none">
+                      <input type="text" class="form-control form-control-sm mb-2 edit-title" />
+                      <input type="date" class="form-control form-control-sm edit-date" />
+                    </div>
                   </div>
                 </div>
 
                 <div class="d-flex align-items-center gap-2">
-                  <span class="pill"><i class="fa-regular fa-circle"></i>Active</span>
+                  <button class="btn btn-sm btn-outline-secondary" title="Check">
+                    <i class="fa-solid fa-check"></i>
+                  </button>
+
+                  <button class="btn btn-sm btn-outline-secondary btn-edit" title="Edit">
+                    <i class="fa-solid fa-pen"></i>
+                  </button>
+
                   <button class="btn btn-sm btn-outline-danger" title="Delete">
                     <i class="fa-solid fa-trash"></i>
                   </button>
@@ -239,14 +212,6 @@
               </div>
             </div>
 
-            <!-- Empty state example (remove later if you want) -->
-            <!--
-            <div class="text-center py-5">
-              <div class="display-6 mb-2">✅</div>
-              <div class="fw-semibold">All done!</div>
-              <div class="text-muted-2">No tasks match your filters.</div>
-            </div>
-            -->
           </div>
         </div>
       </div>
@@ -254,10 +219,170 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
   <script>
-    const d = new Date();
+    // Today label
     document.getElementById("todayDate").textContent =
-      d.toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+      new Date().toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+
+    // ---------- Edit functionality ----------
+    document.addEventListener("click", function (e) {
+      // Start from the element that was clicked, go up the DOM tree, and find the nearest element that has the class btn-edit
+      const editBtn = e.target.closest(".btn-edit");
+      if (!editBtn) return;
+
+      const todoItem = editBtn.closest(".todo-item");
+      if (!todoItem) return;
+// Inside todoItem, find the first element that has the class todo-title
+      const titleEl = todoItem.querySelector(".todo-title");
+      const editFields = todoItem.querySelector(".edit-fields");
+      const editTitle = todoItem.querySelector(".edit-title");
+      const editDate = todoItem.querySelector(".edit-date");
+
+      // Right-side container (where due pill usually lives)
+      const rightArea = todoItem.querySelector(".d-flex.flex-wrap") || todoItem.querySelector(".d-flex.align-items-center");
+
+      // Helper: parse existing due date pill (if present) into yyyy-mm-dd
+      const duePill = todoItem.querySelector(".todo-due");
+      const currentTitle = titleEl ? titleEl.textContent.trim() : "";
+      const currentIsoDate = duePill ? (duePill.dataset.isoDate || "") : "";
+
+      const isEditing = todoItem.classList.contains("is-editing");
+
+      if (!isEditing) {
+        // ENTER edit mode
+        todoItem.classList.add("is-editing");
+
+        // store originals (for cancel)
+        todoItem.dataset.originalTitle = currentTitle;
+        todoItem.dataset.originalIsoDate = currentIsoDate;
+
+        // prefill fields
+        editTitle.value = currentTitle;
+        editDate.value = currentIsoDate; // empty if none
+
+        // toggle UI
+        titleEl.classList.add("d-none");
+
+        editFields.classList.remove("d-none");
+
+        // swap edit button to "Save" + add Cancel button
+        editBtn.title = "Save";
+        editBtn.innerHTML = '<i class="fa-solid fa-save"></i>';
+        editBtn.classList.add("btn-save");
+        editBtn.classList.remove("btn-edit");
+
+        // add a cancel button next to save if not already
+        if (!todoItem.querySelector(".btn-cancel")) {
+          const cancel = document.createElement("button");
+          cancel.className = "btn btn-sm btn-outline-secondary btn-cancel";
+          cancel.type = "button";
+          cancel.title = "Cancel";
+          cancel.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+          // Inserts the cancel element immediately after editBtn in the DOM.
+          editBtn.insertAdjacentElement("afterend", cancel);
+        }
+// Moves the cursor (keyboard focus) into the input field.
+        editTitle.focus();
+        // Moves the text cursor to the END of the input text.
+        editTitle.setSelectionRange(editTitle.value.length, editTitle.value.length);
+        return;
+      }
+    });
+
+    // Handle Save / Cancel
+    document.addEventListener("click", function (e) {
+      const saveBtn = e.target.closest(".btn-save");
+      const cancelBtn = e.target.closest(".btn-cancel");
+
+      if (!saveBtn && !cancelBtn) return;
+
+      const todoItem = (saveBtn || cancelBtn).closest(".todo-item");
+      if (!todoItem) return;
+
+      const titleEl = todoItem.querySelector(".todo-title");
+      const editFields = todoItem.querySelector(".edit-fields");
+      const editTitle = todoItem.querySelector(".edit-title");
+      const editDate = todoItem.querySelector(".edit-date");
+
+      // Right-side container (where we should insert due pill if needed)
+      const rightArea = todoItem.querySelector(".d-flex.flex-wrap") || todoItem.querySelector(".d-flex.align-items-center");
+
+      const exitEditMode = () => {
+        todoItem.classList.remove("is-editing");
+
+        titleEl.classList.remove("d-none");
+        editFields.classList.add("d-none");
+
+        // turn Save back into Edit
+        const btn = todoItem.querySelector(".btn-save");
+        if (btn) {
+          btn.title = "Edit";
+          btn.innerHTML = '<i class="fa-solid fa-pen"></i>';
+          btn.classList.add("btn-edit");
+          btn.classList.remove("btn-save");
+        }
+
+        // remove cancel
+        const cancel = todoItem.querySelector(".btn-cancel");
+        if (cancel) cancel.remove();
+      };
+
+      if (cancelBtn) {
+        // CANCEL: restore old values
+        titleEl.textContent = todoItem.dataset.originalTitle || titleEl.textContent;
+
+        const oldIso = todoItem.dataset.originalIsoDate || "";
+        updateDuePill(todoItem, rightArea, oldIso);
+
+        exitEditMode();
+        return;
+      }
+
+      if (saveBtn) {
+        // SAVE: apply new values
+        const newTitle = editTitle.value.trim() || "Untitled task";
+        const newIso = editDate.value; // "" if cleared
+
+        titleEl.textContent = newTitle;
+        updateDuePill(todoItem, rightArea, newIso);
+
+        exitEditMode();
+      }
+    });
+
+
+
+    // Creates/updates/removes the due pill based on isoDate (yyyy-mm-dd)
+    function updateDuePill(todoItem, rightArea, isoDate) {
+      let pill = todoItem.querySelector(".todo-due");
+
+      // Remove pill if date cleared
+      if (!isoDate) {
+        if (pill) pill.remove();
+        return;
+      }
+
+      // Create pill if missing
+      if (!pill) {
+        pill = document.createElement("span");
+        pill.className = "pill todo-due";
+        pill.innerHTML = '<i class="fa-regular fa-hourglass-half"></i> <span class="due-text"></span>';
+
+        // Put it at the beginning of the right-side actions row (before buttons)
+        if (rightArea) rightArea.prepend(pill);
+      }
+
+      // Store iso date for later prefill
+      pill.dataset.isoDate = isoDate;
+
+      // Format display
+      const d = new Date(isoDate + "T00:00:00");
+      const formatted = d.toLocaleDateString(undefined, { day: "2-digit", month: "short", year: "numeric" });
+
+      const textEl = pill.querySelector(".due-text");
+      if (textEl) textEl.textContent = "Due: " + formatted;
+    }
   </script>
 </body>
 </html>
