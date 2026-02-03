@@ -19,7 +19,6 @@
 
     .todo-item { border: 1px solid rgba(0,0,0,.06); border-radius: 14px; }
     .todo-item + .todo-item { margin-top: 12px; }
-    .form-check-input { width: 1.2em; height: 1.2em; }
 
     .pill {
       border: 1px solid rgba(0,0,0,.10);
@@ -66,17 +65,16 @@
 
             <div class="mb-2">
               <label class="form-label small text-muted-2 mb-1">Task</label>
-              <input type="text" class="form-control" placeholder="e.g., Finish Web2 form demo" />
+              <input type="text" id="taskInput" class="form-control" placeholder="e.g., Finish Web2 form demo" />
             </div>
 
             <div class="mb-3">
               <label class="form-label small text-muted-2 mb-1">Due date (optional)</label>
-              <input type="date" class="form-control" />
-              <label class="form-label small text-muted-2 mb-1" style="text-decoration: underline;cursor: pointer;">Clear due date</label>
+              <input type="date" id="dateInput" class="form-control" />
             </div>
 
             <div class="d-grid">
-              <button class="btn btn-dark">
+              <button class="btn btn-dark" id="addTaskBtn">
                 <i class="fa-solid fa-plus me-2"></i>Add task
               </button>
             </div>
@@ -95,9 +93,7 @@
                   <option>All</option>
                   <option>Active</option>
                   <option>Completed</option>
-                </select>
-                <button class="btn btn-sm btn-outline-secondary">Mark done</button>
-                <button class="btn btn-sm btn-outline-danger">Delete</button>
+                </select> 
               </div>
             </div>
 
@@ -106,7 +102,6 @@
               <div class="d-flex align-items-start justify-content-between gap-3">
                 <div class="d-flex gap-2">
                   <div class="form-check mt-1">
-                    <input class="form-check-input" type="checkbox" checked />
                   </div>
 
                   <!-- ✅ Added: wrap title so JS can find it reliably -->
@@ -121,7 +116,7 @@
                   </div>
                 </div>
 
-                <div class="d-flex align-items-center gap-2">
+                <div class="d-flex align-items-center gap-2 right-area">
                   <button class="btn btn-sm btn-outline-secondary" title="Check">
                     <i class="fa-solid fa-check"></i>
                   </button>
@@ -143,7 +138,6 @@
               <div class="d-flex align-items-start justify-content-between gap-3">
                 <div class="d-flex gap-2">
                   <div class="form-check mt-1">
-                    <input class="form-check-input" type="checkbox" />
                   </div>
 
                   <div class="todo-content">
@@ -156,7 +150,7 @@
                   </div>
                 </div>
 
-                <div class="d-flex flex-wrap align-items-center justify-content-end gap-2">
+                <div class="d-flex flex-wrap align-items-center justify-content-end gap-2 right-area">
                   <!-- ✅ Added class for JS -->
                   <span class="pill todo-due">
                     <i class="fa-regular fa-hourglass-half"></i>
@@ -183,7 +177,6 @@
               <div class="d-flex align-items-start justify-content-between gap-3">
                 <div class="d-flex gap-2">
                   <div class="form-check mt-1">
-                    <input class="form-check-input" type="checkbox" />
                   </div>
 
                   <div class="todo-content">
@@ -196,7 +189,7 @@
                   </div>
                 </div>
 
-                <div class="d-flex align-items-center gap-2">
+                <div class="d-flex align-items-center gap-2 right-area">
                   <button class="btn btn-sm btn-outline-secondary" title="Check">
                     <i class="fa-solid fa-check"></i>
                   </button>
@@ -240,11 +233,11 @@
       const editDate = todoItem.querySelector(".edit-date");
 
       // Right-side container (where due pill usually lives)
-      const rightArea = todoItem.querySelector(".d-flex.flex-wrap") || todoItem.querySelector(".d-flex.align-items-center");
+      const rightArea = todoItem.querySelector(".right-area");
 
       // Helper: parse existing due date pill (if present) into yyyy-mm-dd
       const duePill = todoItem.querySelector(".todo-due");
-      const currentTitle = titleEl ? titleEl.textContent.trim() : "";
+      const currentTitle = titleEl.textContent.trim();
       const currentIsoDate = duePill ? (duePill.dataset.isoDate || "") : "";
 
       const isEditing = todoItem.classList.contains("is-editing");
@@ -273,7 +266,6 @@
         editBtn.classList.remove("btn-edit");
 
         // add a cancel button next to save if not already
-        if (!todoItem.querySelector(".btn-cancel")) {
           const cancel = document.createElement("button");
           cancel.className = "btn btn-sm btn-outline-secondary btn-cancel";
           cancel.type = "button";
@@ -281,11 +273,7 @@
           cancel.innerHTML = '<i class="fa-solid fa-xmark"></i>';
           // Inserts the cancel element immediately after editBtn in the DOM.
           editBtn.insertAdjacentElement("afterend", cancel);
-        }
-// Moves the cursor (keyboard focus) into the input field.
-        editTitle.focus();
-        // Moves the text cursor to the END of the input text.
-        editTitle.setSelectionRange(editTitle.value.length, editTitle.value.length);
+
         return;
       }
     });
@@ -306,8 +294,7 @@
       const editDate = todoItem.querySelector(".edit-date");
 
       // Right-side container (where we should insert due pill if needed)
-      const rightArea = todoItem.querySelector(".d-flex.flex-wrap") || todoItem.querySelector(".d-flex.align-items-center");
-
+      const rightArea = todoItem.querySelector(".right-area");
       const exitEditMode = () => {
         todoItem.classList.remove("is-editing");
 
@@ -330,7 +317,7 @@
 
       if (cancelBtn) {
         // CANCEL: restore old values
-        titleEl.textContent = todoItem.dataset.originalTitle || titleEl.textContent;
+        titleEl.textContent = todoItem.dataset.originalTitle;
 
         const oldIso = todoItem.dataset.originalIsoDate || "";
         updateDuePill(todoItem, rightArea, oldIso);
@@ -383,6 +370,97 @@
       const textEl = pill.querySelector(".due-text");
       if (textEl) textEl.textContent = "Due: " + formatted;
     }
+    const addTaskBtn = document.getElementById("addTaskBtn");
+const taskInput = document.getElementById("taskInput");
+const dateInput = document.getElementById("dateInput");
+const taskListContainer = document.querySelector(".col-lg-8 .card-body"); // The container for items
+
+addTaskBtn.addEventListener("click", function() {
+  const title = taskInput.value.trim();
+  const dueDate = dateInput.value;
+
+  if (!title) {
+      taskInput.focus();
+    return;
+  }
+
+  // Create the task HTML structure
+  const newTask = document.createElement("div");
+  newTask.className = "todo-item p-3 bg-white";
+  newTask.innerHTML = `
+    <div class="d-flex align-items-start justify-content-between gap-3">
+      <div class="d-flex gap-2">
+        <div class="todo-content">
+          <div class="fw-semibold todo-title">${title}</div>
+          <div class="edit-fields d-none">
+            <input type="text" class="form-control form-control-sm mb-2 edit-title" value="${title}" />
+            <input type="date" class="form-control form-control-sm edit-date" value="${dueDate}" />
+          </div>
+        </div>
+      </div>
+      <div class="d-flex flex-wrap align-items-center justify-content-end gap-2 right-area">
+        ${dueDate ? `
+          <span class="pill todo-due" data-iso-date="${dueDate}">
+            <i class="fa-regular fa-hourglass-half"></i>
+            <span class="due-text">Due: ${new Date(dueDate + "T00:00:00").toLocaleDateString(undefined, {day:'2-digit', month:'short', year:'numeric'})}</span>
+          </span>` : ''}
+        <button class="btn btn-sm btn-outline-secondary btn-check-task" title="Check"><i class="fa-solid fa-check"></i></button>
+        <button class="btn btn-sm btn-outline-secondary btn-edit" title="Edit"><i class="fa-solid fa-pen"></i></button>
+        <button class="btn btn-sm btn-outline-danger btn-delete" title="Delete"><i class="fa-solid fa-trash"></i></button>
+      </div>
+    </div>`;
+
+  taskListContainer.appendChild(newTask);
+  
+  // Clear inputs
+  taskInput.value = "";
+  dateInput.value = "";
+});
+document.addEventListener("click", function (e) {
+  // DELETE Logic
+  const deleteBtn = e.target.closest(".btn-delete") || e.target.closest(".btn-outline-danger");
+  if (deleteBtn && !deleteBtn.classList.contains('btn-save')) { // check it's not the save button
+    deleteBtn.closest(".todo-item").remove();
+  }
+
+  // CHECK/COMPLETE Logic
+  const checkBtn = e.target.closest(".btn-check-task") || (e.target.closest(".btn-outline-secondary") && e.target.querySelector('.fa-check'));
+  if (checkBtn) {
+    const todoItem = checkBtn.closest(".todo-item");
+    const titleEl = todoItem.querySelector(".todo-title");
+    
+    // Toggle completed state
+    todoItem.classList.toggle("completed"); 
+    titleEl.classList.toggle("text-decoration-line-through");
+    titleEl.classList.toggle("text-muted");
+    
+    // Optional: change button color when checked
+    checkBtn.classList.toggle("btn-success");
+    checkBtn.classList.toggle("btn-outline-secondary");
+  }
+});
+const filterSelect = document.querySelector(".form-select");
+
+filterSelect.addEventListener("change", function() {
+  const filterValue = this.value; // "All", "Active", or "Completed"
+  const items = document.querySelectorAll(".todo-item");
+
+  items.forEach(item => {
+    const isCompleted = item.classList.contains("completed");
+
+    switch (filterValue) {
+      case "All":
+        item.classList.remove("d-none");
+        break;
+      case "Active":
+        isCompleted ? item.classList.add("d-none") : item.classList.remove("d-none");
+        break;
+      case "Completed":
+        isCompleted ? item.classList.remove("d-none") : item.classList.add("d-none");
+        break;
+    }
+  });
+});
   </script>
 </body>
 </html>
