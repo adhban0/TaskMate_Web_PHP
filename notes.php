@@ -1,0 +1,169 @@
+<?php
+require_once 'config.php';
+if (!isLoggedIn()) {
+    redirect('login.php');
+}
+
+$user_id = $_SESSION['id'];
+$notes = [];
+
+
+
+$notes_query = "SELECT id, title, content, updated_at
+               FROM notes
+               WHERE user_id = $user_id
+               ORDER BY updated_at";
+
+$notes_result = mysqli_query($conn, $notes_query);
+
+if ($notes_result) {
+    while ($row = mysqli_fetch_assoc($notes_result)) {
+        $notes[] = $row;
+    }
+}
+
+?>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TaskMate — Notes</title>
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Font Awesome (optional) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    body { background: #f6f7fb; }
+    .card { border: 0; border-radius: 16px; }
+    .shadow-soft { box-shadow: 0 10px 30px rgba(0,0,0,.06); }
+    .text-muted-2 { color: #6b7280; }
+
+    .form-control:focus, .form-select:focus {
+      box-shadow: 0 0 0 .2rem rgba(17, 24, 39, .08);
+      border-color: rgba(17, 24, 39, .25);
+    }
+
+    .note-card {
+      border: 1px solid rgba(0,0,0,.06);
+      border-radius: 16px;
+      transition: transform .08s ease, box-shadow .08s ease;
+      cursor: pointer;
+      height: 100%;
+    }
+    .note-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 30px rgba(0,0,0,.08);
+    }
+    .pill {
+      border: 1px solid rgba(0,0,0,.10);
+      background: #fff;
+      border-radius: 999px;
+      padding: .35rem .6rem;
+      font-size: .85rem;
+      color: #111827;
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      white-space: nowrap;
+    }
+    .note-snippet {
+      color: #6b7280;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      min-height: 3.9em;
+    }
+    .kbd-hint {
+      font-size: .85rem;
+      color: #6b7280;
+      border: 1px solid rgba(0,0,0,.10);
+      background: #fff;
+      border-radius: 10px;
+      padding: .2rem .45rem;
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+    }
+  </style>
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+  <!-- Top Navbar -->
+<?php include ("header.php");?>
+  <main class="container my-4 flex-grow-1">
+    <!-- Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+      <div>
+        <h2 class="mb-1">Notes</h2>
+        <div class="text-muted-2">Organize ideas, study notes, and project drafts.</div>
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        <a href="editor.php">
+        <button class="btn btn-dark">
+          <i class="fa-solid fa-plus me-2"></i>New note
+        </button>
+</a>
+      </div>
+    </div>
+
+    <div class="row g-3">
+      <!-- Left: Filters -->
+      
+
+      <!-- Right: Notes grid -->
+      <div class="col-12 col-lg-8">
+        <div class="card shadow-soft">
+          <div class="card-body">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+              <h5 class="mb-0">All notes</h5>
+              
+            </div>
+            <?php if (empty($notes)): ?>
+              <p class="text-center text-muted">No notes found. Add one!</p>
+                    <?php endif; ?>
+
+            <div class="row g-3">
+              <!-- Note card -->
+            <?php foreach ($notes as $note): ?>
+              <div class="col-12 col-md-6">
+                <div class="note-card p-3 bg-white">
+                  <div class="d-flex justify-content-between align-items-start gap-2">
+                    <div>
+                      <div class="fw-semibold"><?php echo $note['title']; ?></div>
+                      <div class="small text-muted-2">Last Updated: <?php echo date('d M Y', strtotime($note['updated_at'])); ?></div>
+                    </div>
+                  </div>
+                  <div class="note-snippet mt-2">
+                    <?php echo $note['content']; ?>
+                  </div>
+                  
+                  <div class="d-flex justify-content-end gap-2 mt-3">
+                    <a href="editor.php?id=<?php echo $note['id']; ?>" class="btn btn-sm btn-outline-primary">
+        <i class="fa-solid fa-pen"></i>
+                    <a href="notes-deletenote.php?id=<?php echo $note['id']; ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this note?')">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </a>
+
+                  </div>
+                </div>
+              </div>
+
+
+<?php endforeach; ?>
+            </div> <!-- /.row g-3 (notes grid) -->
+          </div> <!-- /.card-body -->
+        </div> <!-- /.card -->
+      </div> <!-- /.col -->
+    </div> <!-- /.row -->
+
+  </main>
+
+  <?php include("footer.php"); ?>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
