@@ -183,6 +183,7 @@ $eventsJson = json_encode($eventsByDate, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED
     .cal-day {
       background: #fff; border: 1px solid rgba(0,0,0,.06);
       border-radius: 14px; min-height: 120px; padding: 10px; position: relative;
+       min-width: 0;
     }
     .cal-day.muted { background: rgba(255,255,255,.55); color: #9ca3af; }
     .cal-day .num { font-weight: 700; font-size: .95rem; color: #111827; }
@@ -195,10 +196,10 @@ $eventsJson = json_encode($eventsByDate, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED
       font-size: .82rem; margin-top: 8px;
       border: 1px solid rgba(0,0,0,.08);
       background: #fff; color: #111827;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; min-width: 0;
     }
     .dot { width: 10px; height: 10px; border-radius: 50%; background: #111827; flex: 0 0 auto; }
-
+.chip .text-truncate { min-width: 0; display: block; }
     .pill {
       border: 1px solid rgba(0,0,0,.10);
       background: #fff;

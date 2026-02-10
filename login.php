@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_SESSION['id'] = $user['id'];
             $_SESSION['email'] = $user['email'];
 
-                redirect('dash.php');
+                redirect('index.php');
            
             
             

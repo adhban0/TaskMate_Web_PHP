@@ -20,8 +20,8 @@ function seedUserHolidays(mysqli $conn, int $user_id, array $apiResponse, int $t
     
 
     $sql = "INSERT INTO calendar_events
-            (user_id, title, event_date, event_time)
-            VALUES (?, ?, ?, NULL)";
+            (user_id, title, event_date)
+            VALUES (?, ?, ?)";
 
     $stmt = mysqli_prepare($conn, $sql);
     if (!$stmt) return;
@@ -48,7 +48,7 @@ function seedUserHolidays(mysqli $conn, int $user_id, array $apiResponse, int $t
 
 
 
-        mysqli_stmt_bind_param($stmt,'isss', $user_id, $title, $newDate);
+        mysqli_stmt_bind_param($stmt,'iss', $user_id, $title, $newDate);
         $stmt->execute();
     }
 

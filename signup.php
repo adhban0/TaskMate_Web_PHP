@@ -52,6 +52,7 @@ if (empty($country_code)) {
     $email_error='This email is invalid.';
       $success = false;
     }
+    $passwordRegex = '/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()\-.+]).{8,20}$/';
     if (empty($password)){
       $password_error = 'Password is required.';
       $success = false;
@@ -66,12 +67,6 @@ if (empty($country_code)) {
     }
     if (($password != $confirm_password) && !empty($password) && !empty($confirm_password)){
       $confirmpassword_error = 'Your passwords do not match';
-      $success = false;
-    }
-    $passwordRegex = '/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()\-.+]).{8,20}$/';
-    if (!preg_match($passwordRegex,$password) && !empty($password))
-    {
-      $password_error = 'Your Password is not strong enough';
       $success = false;
     }
 
@@ -124,7 +119,7 @@ mysqli_stmt_bind_param($stmt_insert, 'sss', $email, $hashed_password, $country_c
                         
                         mysqli_stmt_close($stmt_insert);
                         
-                        redirect('dash.php'); 
+                        redirect('index.php'); 
                         
                     } else {
                         $error = 'Registration failed: ' . mysqli_error($conn);
@@ -142,7 +137,7 @@ mysqli_stmt_bind_param($stmt_insert, 'sss', $email, $hashed_password, $country_c
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TaskMate — Login</title>
+  <title>TaskMate — Signup</title>
 
   <!-- Bootstrap 5 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />

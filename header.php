@@ -1,7 +1,7 @@
 <header>
   <nav class="navbar navbar-expand-lg bg-white border-bottom">
     <div class="container py-1">
-      <a class="navbar-brand fw-semibold d-flex align-items-center gap-2" href="dash.php">
+      <a class="navbar-brand fw-semibold d-flex align-items-center gap-2" href="index.php">
         <span>TaskMate</span>
       </a>
 
@@ -13,7 +13,7 @@
       <div class="collapse navbar-collapse" id="taskmateNav">
         <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-1">
           <li class="nav-item">
-            <a class="nav-link" href="dash.php">
+            <a class="nav-link" href="index.php">
               <i class="fa-solid fa-gauge-high me-1"></i>Dashboard
             </a>
           </li>
