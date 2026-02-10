@@ -8,19 +8,16 @@ $user_id = (int)$_SESSION['id'];
 $error = null;
 $title= '';
 $event_date = '';
-/* ---------------------------
-   1) Handle POST (Create/Update/Delete)
-   --------------------------- */
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $action = $_POST['action'] ?? '';
 
-  // Keep the user on the same month after POST
-  $returnYm = $_POST['return_ym'] ?? date('Y-m'); // YYYY-MM
+  $returnYm = $_POST['return_ym'] ?? date('Y-m'); 
 
-  // Basic sanitize helpers
+  
   $title = trim($_POST['title'] ?? '');
   $event_date = $_POST['event_date'] ?? '';
-  $event_time = trim($_POST['event_time'] ?? ''); // HH:MM or empty
+  $event_time = trim($_POST['event_time'] ?? ''); 
   $description = trim($_POST['description'] ?? '');
 
   // add 00 to the time of html or null if it is ''
@@ -31,17 +28,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   try {
     if ($action === 'create') {
       if ($title === '' || $event_date === '') {
-        // You can add nicer error UI later, for now redirect
+        
         $error = "Title and date are required";
       }
 if (!$error){
       $sql = "INSERT INTO calendar_events (user_id, title, event_date, event_time, description)
               VALUES (?, ?, ?, ?, ?)";
-      $stmt = $conn->prepare($sql);
-      $stmt->bind_param("issss", $user_id, $title, $event_date, $event_time_db, $description_db);
-      $stmt->execute();
+      $stmt = mysqli_prepare($conn,$sql);
+      mysqli_stmt_bind_param($stmt,"issss", $user_id, $title, $event_date, $event_time_db, $description_db);
+      mysqli_stmt_execute( $stmt );
 
-      header("Location: calendar.php?ym=" . urlencode($returnYm));
+      redirect("calendar.php?ym=" . urlencode($returnYm));
       exit;}
     }
 
@@ -51,15 +48,14 @@ if (!$error){
         $error = "Title and date are required";
       }
       if (!$error){
-      // user_id condition prevents editing others’ events
       $sql = "UPDATE calendar_events
               SET title = ?, event_date = ?, event_time = ?, description = ?
               WHERE id = ? AND user_id = ?";
-      $stmt = $conn->prepare($sql);
-      $stmt->bind_param("ssssii", $title, $event_date, $event_time_db, $description_db, $id, $user_id);
-      $stmt->execute();
+      $stmt = mysqli_prepare($conn,$sql);
+      mysqli_stmt_bind_param($stmt, $title, $event_date, $event_time_db, $description_db, $id, $user_id);
+      mysqli_stmt_execute( $stmt );
 
-      header("Location: calendar.php?ym=" . urlencode($returnYm));
+      redirect("calendar.php?ym=" . urlencode($returnYm));
       exit;}
     }
 
@@ -67,84 +63,58 @@ if (!$error){
       $id = (int)($_POST['id'] ?? 0);
       if ($id > 0) {
         $sql = "DELETE FROM calendar_events WHERE id = ? AND user_id = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ii", $id, $user_id);
-        $stmt->execute();
+        $stmt = mysqli_prepare($conn,$sql);
+        mysqli_stmt_bind_param($stmt,"ii", $id, $user_id);
+        mysqli_stmt_execute( $stmt );
       }
 
-      header("Location: calendar.php?ym=" . urlencode($returnYm));
+      redirect("calendar.php?ym=" . urlencode($returnYm));
       exit;
     }
 
   } catch (Throwable $e) {
-    // In production, log $e->getMessage()
-    header("Location: calendar.php?ym=" . urlencode($returnYm));
+      redirect("calendar.php?ym=" . urlencode($returnYm));
     exit;
   }
 }
 
-/* ---------------------------
-   2) Determine viewed month (GET ym=YYYY-MM)
-   --------------------------- */
+
 $ym = $_GET['ym'] ?? date('Y-m'); // YYYY-MM
 if (!preg_match('/^\d{4}-\d{2}$/', $ym)) $ym = date('Y-m');
 
 [$year, $month] = array_map('intval', explode('-', $ym));
 // Builds a date string like "2026-02-01" (first day of the month)
-
 // sprintf('%04d-%02d-01', ...) ensures correct formatting:
-
 // year always 4 digits
-
 // month always 2 digits (02 not 2)
-
 // Then creates a DateTime object for that date.
 $firstOfMonth = new DateTime(sprintf('%04d-%02d-01', $year, $month));
-
-// For a 42-cell calendar grid starting Sunday:
 $startDow = (int)$firstOfMonth->format('w'); // format('w') gives the day-of-week number:
 // Makes a copy of $firstOfMonth.
-
-// Important: if you didn’t clone, editing $gridStart would also change $firstOfMonth.
   $gridStart = clone $firstOfMonth;
 //   Moves $gridStart backwards until it reaches the Sunday of the first week shown.
-
-// Example:
-
-// If month starts on Wednesday ($startDow=3)
-
-// Go back 3 days → Sunday.
-
-// So your grid always begins on a Sunday, even if that date is in the previous month.
 // modify is a datetime method
 $gridStart->modify("-{$startDow} days");
-
 $gridEnd = clone $gridStart;
 $gridEnd->modify("+41 days");
-
 $gridStartStr = $gridStart->format('Y-m-d');
 $gridEndStr   = $gridEnd->format('Y-m-d');
-
 // Prev/Next month links
 $prev = clone $firstOfMonth; $prev->modify('-1 month');
 $next = clone $firstOfMonth; $next->modify('+1 month');
 $prevYm = $prev->format('Y-m');
 $nextYm = $next->format('Y-m');
-
-// Today
 $todayStr = (new DateTime())->format('Y-m-d');
 
-/* ---------------------------
-   3) Load events for the grid range (includes muted days)
-   --------------------------- */
-$eventsByDate = []; // "YYYY-MM-DD" => [ events... ]
+
+$eventsByDate = []; 
 $sql = "SELECT id, title, event_date, event_time, description
         FROM calendar_events
         WHERE user_id = ? AND event_date BETWEEN ? AND ?
         ORDER BY event_date ASC, event_time ASC, id ASC";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("iss", $user_id, $gridStartStr, $gridEndStr);
-$stmt->execute();
+        $stmt = mysqli_prepare($conn,$sql);
+        mysqli_stmt_bind_param($stmt,"iss", $user_id, $gridStartStr, $gridEndStr);
+        mysqli_stmt_execute( $stmt );
 $res = $stmt->get_result();
 
 while ($row = $res->fetch_assoc()) {
@@ -160,9 +130,7 @@ while ($row = $res->fetch_assoc()) {
   ];
 }
 
-/* ---------------------------
-   4) Load agenda (upcoming from today)
-   --------------------------- */
+
 $agenda = [];
 $sql = "SELECT id, title, event_date, event_time, description
         FROM calendar_events
@@ -172,9 +140,9 @@ $sql = "SELECT id, title, event_date, event_time, description
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("is", $user_id, $todayStr);
 $stmt->execute();
-$res = $stmt->get_result();
+    $result = mysqli_stmt_get_result($stmt);
 
-while ($row = $res->fetch_assoc()) {
+while ($row = mysqli_fetch_assoc($result)) {
   $agenda[] = [
     'id' => (int)$row['id'],
     'title' => $row['title'],
@@ -183,8 +151,7 @@ while ($row = $res->fetch_assoc()) {
     'notes' => $row['description'] ?? ''
   ];
 }
-
-// For the Day Detail modal, it’s easiest to expose eventsByDate as JSON once (still Option B, no AJAX)
+// for day detail modal
 $eventsJson = json_encode($eventsByDate, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 ?>
 <!doctype html>
@@ -265,7 +232,6 @@ $eventsJson = json_encode($eventsByDate, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED
     </div>
 
     <div class="row g-3">
-      <!-- Left: Month view -->
       <div class="col-12 col-lg-8">
         <div class="card shadow-soft">
           <div class="card-body">
@@ -318,7 +284,7 @@ $eventsJson = json_encode($eventsByDate, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED
                   <div class="d-flex justify-content-between align-items-start">
                     <div class="num"><?php echo htmlspecialchars($cellDay); ?></div>
 
-                    <!-- Add event (opens modal via tiny JS) -->
+                    <!-- Add event (opens modal) -->
                     <button
                       type="button"
                       class="btn btn-sm btn-outline-secondary py-0 px-2"
@@ -338,6 +304,7 @@ $eventsJson = json_encode($eventsByDate, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED
                     $notes = htmlspecialchars($ev['notes']);
                     $id = (int)$ev['id'];
                   ?>
+                  <!-- shows each event as a button -->
                     <button
                       type="button"
                       class="chip text-start"
@@ -446,7 +413,6 @@ $eventsJson = json_encode($eventsByDate, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED
   </div>
 <?php endif; ?>
 
-          <!-- action + id -->
           <input type="hidden" name="action" id="formAction" value="create">
           <input type="hidden" name="id" id="formId" value="">
           <input type="hidden" name="return_ym" value="<?php echo htmlspecialchars($ym); ?>">
@@ -512,7 +478,6 @@ $eventsJson = json_encode($eventsByDate, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
-    // Tiny JS: only for opening/filling modals (no AJAX)
     const eventsByDate = <?php echo $eventsJson ?: '{}'; ?>;
 
     const addEventModal = new bootstrap.Modal(document.getElementById("addEventModal"));
@@ -521,7 +486,6 @@ $eventsJson = json_encode($eventsByDate, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED
     const calGrid = document.getElementById("calGrid");
     const agendaList = document.getElementById("agendaList");
 
-    // Form elements
     const formAction = document.getElementById("formAction");
     const formId = document.getElementById("formId");
 
@@ -583,7 +547,6 @@ $eventsJson = json_encode($eventsByDate, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED
     // Delete: turn the same form into delete and submit
     eventDeleteBtn.addEventListener("click", () => {
       formAction.value = "delete";
-      // submit the form
       eventDeleteBtn.closest("form").submit();
     });
 
@@ -607,14 +570,12 @@ $eventsJson = json_encode($eventsByDate, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED
       }
     });
 
-    // Agenda click handling (same dataset shape)
     agendaList.addEventListener("click", (e) => {
       const el = e.target.closest("[data-action='edit']");
       if (!el) return;
       openEditFromDataset(el.dataset);
     });
 
-    // Agenda Add button
     document.getElementById("agendaAddBtn").addEventListener("click", () => {
       const today = new Date();
       const y = today.getFullYear();
@@ -648,7 +609,6 @@ $eventsJson = json_encode($eventsByDate, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED
             </div>
           `;
 
-          // clicking opens edit modal
           btn.addEventListener("click", () => {
             dayDetailModal.hide();
             openEditFromDataset({
@@ -682,7 +642,6 @@ function showModalError(msg) {
 function clearModalError() {
   modalError.classList.add("d-none");
   modalErrorText.textContent = "";
-  // remove invalid styles
   eventTitle.classList.remove("is-invalid");
   eventDate.classList.remove("is-invalid");
 }
@@ -696,9 +655,8 @@ modalForm.addEventListener("submit", (e) => {
   const title = eventTitle.value.trim();
   const date = eventDate.value.trim();
 
-  // Same rule as PHP: title and date are required
   if (title === "" || date === "") {
-    e.preventDefault(); // ✅ stop form submit
+    e.preventDefault(); 
 
     showModalError("Title and date are required");
 
@@ -713,16 +671,14 @@ modalForm.addEventListener("submit", (e) => {
     return;
   }
 
-  // If valid: allow submit normally
 });
-// Clear error + invalid styles when the modal closes (Cancel / X / backdrop click / Esc)
+// Clear error + invalid styles when the modal closes 
 document.getElementById("addEventModal").addEventListener("hidden.bs.modal", () => {
-  clearModalError();          // hides the alert + removes is-invalid classes
-  // optional: also clear the form fields if you want
-  // eventTitle.value = "";
-  // eventDate.value = "";
-  // eventTime.value = "";
-  // eventNotes.value = "";
+  clearModalError();          
+  eventTitle.value = "";
+  eventDate.value = "";
+  eventTime.value = "";
+  eventNotes.value = "";
 });
 
 

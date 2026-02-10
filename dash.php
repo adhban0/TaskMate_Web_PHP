@@ -33,14 +33,12 @@ if ($events_result) {
         $events[] = $row;
     }
 }
-// --- GEMINI API INTEGRATION ---
-$ai_summary = "No tasks found to analyze.";
+$ai_summary = "No tasks/events found to analyze.";
 
 if (!empty($tasks) || !empty($events)) {
-    $apiKey = "AIzaSyCIl6TtnqbFrTAJ0bYd9IlMoY5HXbxez9I"; // Replace with your key
+    $apiKey = "AIzaSyCIl6TtnqbFrTAJ0bYd9IlMoY5HXbxez9I"; 
 $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=" . $apiKey;
 
-    // Prepare the prompt from your tasks
     $task_list_string = "";
     foreach ($tasks as $t) {
         $task_list_string .= "- " . $t['title'] . " (Due: " . $t['due_date'] . ")\n";
@@ -52,7 +50,6 @@ $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lat
 
     $prompt = "Act as a productivity coach. ";
 
-// Add tasks only if they exist
 if (!empty(trim($task_list_string))) {
     $prompt .= "Here are my top 5 upcoming tasks:\n" . $task_list_string . "\n";
 }
@@ -74,7 +71,6 @@ $prompt .= "Give me a 2-sentence productivity plan and tell me which one to focu
     curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    // curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // For local dev environments
 
     $response = curl_exec($ch);
     $response_data = json_decode($response, true);
@@ -125,7 +121,6 @@ $prompt .= "Give me a 2-sentence productivity plan and tell me which one to focu
       </div>
     </div>
 
-    <!-- Quick Stats -->
   
 
 <div class="row g-3 d-flex align-items-stretch">

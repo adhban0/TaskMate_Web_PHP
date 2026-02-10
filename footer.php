@@ -6,13 +6,7 @@
         <span class="text-muted-2 small">© <span id="tmYear"></span> All rights reserved.</span>
       </div>
 
-      <!-- <div class="d-flex flex-wrap justify-content-center gap-3 small">
-        <a href="#" class="text-decoration-none text-muted-2">Dashboard</a>
-        <a href="#" class="text-decoration-none text-muted-2">To-do</a>
-        <a href="#" class="text-decoration-none text-muted-2">Calendar</a>
-        <a href="#" class="text-decoration-none text-muted-2">Notes</a>
-        <a href="#" class="text-decoration-none text-muted-2">Settings</a>
-      </div> -->
+
 
       <div class="small text-muted-2">
         Made for productivity
@@ -22,6 +16,5 @@
 </footer>
 
 <script>
-  // Footer year
   document.getElementById("tmYear").textContent = new Date().getFullYear();
 </script>

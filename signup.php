@@ -7,17 +7,17 @@ $confirmpassword_error = '';
 $country_error = '';
 $country_code = '';
 $success = true;
-$form_data = []; // Array to hold POST data to repopulate the form
+$form_data = [];
 
-// Handle form submission
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // 1. Sanitize user input (always trim and filter)
+
     $email = trim($_POST['email']);
     $password = trim($_POST['password']);
     $confirm_password = trim($_POST['confirm_password']);
     $country_code = trim($_POST['country_code']);
     
-    // Store POST data to repopulate form on error
+
     $form_data = [
         'email' => $email,
   'country_code' => $country_code
@@ -48,21 +48,22 @@ if (empty($country_code)) {
     if (empty($email)){
       $email_error = 'Email is required.';
       $success = false;
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    $email_error='This email is invalid.';
+      $success = false;
     }
     if (empty($password)){
       $password_error = 'Password is required.';
+      $success = false;
+    } else if (!preg_match($passwordRegex,$password))
+    {
+      $password_error = 'Your Password is not strong enough';
       $success = false;
     }
     if (empty($confirm_password)){
       $confirmpassword_error = 'Please confirm your password';
       $success = false;
     }
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL) && !empty($email)){
-      $email_error='This email is invalid.';
-      $success = false;
-    }
-
-
     if (($password != $confirm_password) && !empty($password) && !empty($confirm_password)){
       $confirmpassword_error = 'Your passwords do not match';
       $success = false;
@@ -74,20 +75,7 @@ if (empty($country_code)) {
       $success = false;
     }
 
-    
-    
-    // Validation
-    // if ( empty($email) || empty($password) || empty($confirm_password)) {
-    //     $error = 'All fields are required!';
-    // } elseif ($password !== $confirm_password) {
-    //     $error = 'Passwords do not match!';
-    //     // changable
-    // } elseif (strlen($password) < 6) {
-    //     $error = 'Password must be at least 6 characters!';
-    // } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    //     $error = 'Invalid email format!';
     if ($success){
-        // --- 2. Check if username or email already exists using Prepared Statements ---
         
         $check_query = "SELECT id FROM users WHERE email = ?";
         $stmt_check = mysqli_prepare($conn, $check_query);
@@ -105,10 +93,8 @@ if (empty($country_code)) {
             } else {
                 mysqli_stmt_close($stmt_check);
                 
-                // --- 3. Securely Hash Password ---
                 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
                 
-                // --- 4. Insert new user and auto-login ---
                 $insert_query = "INSERT INTO users (email, password_hash, country_code) VALUES (?, ?, ?)";
 
                                  
@@ -121,26 +107,23 @@ mysqli_stmt_bind_param($stmt_insert, 'sss', $email, $hashed_password, $country_c
                     
                     if (mysqli_stmt_execute($stmt_insert)) {
                         
-                        // --- CRITICAL: Get the ID and set session for auto-login ---
                         $new_user_id = mysqli_insert_id($conn);
                         $yearNow = (int)date('Y');
                          
-$holidays = $holiday_api->holidays([
-    'country' => $country_code,
-    'year'    => '2025',
-    'public'  => true,
-]);
-// current year
-seedUserHolidays($conn, $new_user_id, $holidays, $yearNow);
+                        $holidays = $holiday_api->holidays([
+                            'country' => $country_code,
+                            'year'    => '2025',
+                            'public'  => true,
+                        ]);
+                        seedUserHolidays($conn, $new_user_id, $holidays, $yearNow);
 
 
-seedUserHolidays($conn, $new_user_id, $holidays, $yearNow + 1);
+                        seedUserHolidays($conn, $new_user_id, $holidays, $yearNow + 1);
 
                         $_SESSION['id'] = $new_user_id;
                         
                         mysqli_stmt_close($stmt_insert);
                         
-                        // Redirect user to the home page immediately
                         redirect('dash.php'); 
                         
                     } else {
@@ -214,9 +197,6 @@ span[id$="_error"] {
 <body class="d-flex flex-column min-vh-100">
 <?php include ("credentialsheader.php");?>
 
-  <!-- Top navbar -->
-
-  <!-- Main content -->
   <main class="flex-grow-1 d-flex align-items-center">
     <div class="container">
       <div class="row justify-content-center">
@@ -233,7 +213,6 @@ span[id$="_error"] {
         
 
               <form id="signup-form" method="POST" action="">
-                <!-- Email -->
                 <div class="mb-3">
                   <label class="form-label small text-muted-2">Email address</label><span id="email_error"><?php echo $email_error;?></span>
                   <input
@@ -245,7 +224,6 @@ span[id$="_error"] {
                     value="<?php echo htmlspecialchars($form_data['email'] ?? ''); ?>"
                   />
                 </div>
-                <!-- Country -->
 <div class="mb-3">
   <label class="form-label small text-muted-2">Country (ISO code)</label>
   <span id="country_error"><?php echo $country_error; ?></span>
@@ -473,9 +451,7 @@ span[id$="_error"] {
     </div>
   </main>
 
-  <!-- Footer -->
   <?php include ("footer.php");?>
-<!-- Enables bootstrap js (e.g. mobile toggle button for hamburger menu) -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
     const form = document.getElementById("signup-form");
@@ -516,33 +492,35 @@ span[id$="_error"] {
   country_error.textContent = "Please choose a valid country from the list.";
   valid = false;
 }
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()\-.+]).{8,20}$/;
+
       if (!email) {
         email_error.textContent = "Email is required.";
+        valid = false;
+      } else if (!emailRegex.test(email)) {
+        email_error.textContent = "This email is invalid.";
         valid = false;
       }
 
       if (!password) {
         password_error.textContent = "Password is required.";
         valid = false;
+      } else if(!passwordRegex.test(password)){
+        password_error.textContent = "Your password is not strong enough";
+        valid = false;
       }
       if (!confirm_password) {
         confirmpassword_error.textContent = "Please confirm your password";
         valid = false;
       }
-      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-      if (!emailRegex.test(email) && email) {
-        email_error.textContent = "This email is invalid.";
-        valid = false;
-      }
+      
+      
       if (!(password==confirm_password) && password && confirm_password){
         confirmpassword_error.textContent = "Your passwords do not match";
         valid = false;
       }
-      const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()\-.+]).{8,20}$/;
-      if(!passwordRegex.test(password) && password){
-        password_error.textContent = "Your password is not strong enough";
-        valid = false;
-      }
+      
       if (!country_code) {
   country_error.textContent = "Country is required.";
   valid = false;

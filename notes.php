@@ -92,10 +92,8 @@ if ($notes_result) {
 </head>
 
 <body class="d-flex flex-column min-vh-100">
-  <!-- Top Navbar -->
 <?php include ("header.php");?>
   <main class="container my-4 flex-grow-1">
-    <!-- Header -->
     <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
       <div>
         <h2 class="mb-1">Notes</h2>
@@ -111,10 +109,7 @@ if ($notes_result) {
     </div>
 
     <div class="row g-3">
-      <!-- Left: Filters -->
-      
 
-      <!-- Right: Notes grid -->
       <div class="col-12 col-lg-8">
         <div class="card shadow-soft">
           <div class="card-body">
@@ -127,7 +122,6 @@ if ($notes_result) {
                     <?php endif; ?>
 
             <div class="row g-3">
-              <!-- Note card -->
             <?php foreach ($notes as $note): ?>
               <div class="col-12 col-md-6">
                 <div class="note-card p-3 bg-white">
@@ -154,11 +148,11 @@ if ($notes_result) {
 
 
 <?php endforeach; ?>
-            </div> <!-- /.row g-3 (notes grid) -->
-          </div> <!-- /.card-body -->
-        </div> <!-- /.card -->
-      </div> <!-- /.col -->
-    </div> <!-- /.row -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div> 
 
   </main>
 

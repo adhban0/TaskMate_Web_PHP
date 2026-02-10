@@ -6,13 +6,12 @@ if (!isLoggedIn()) {
 
 $user_id = (int)$_SESSION['id'];
 
-// Detect edit mode
 $note_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 $noteTitle = "";
 $noteContent = "";
 
-// If editing, load note data (only if it belongs to this user)
+// If editing, load note data 
 if ($note_id > 0) {
     $stmt = mysqli_prepare($conn, "SELECT title, content FROM notes WHERE id = ? AND user_id = ? LIMIT 1");
     mysqli_stmt_bind_param($stmt, "ii", $note_id, $user_id);
@@ -23,8 +22,7 @@ if ($note_id > 0) {
         $noteTitle = $row['title'];
         $noteContent = $row['content'];
     } else {
-        // Note not found or not yours
-        redirect('notes.php'); // change to your notes listing page name
+        redirect('notes.php'); 
     }
 
     mysqli_stmt_close($stmt);
@@ -37,7 +35,6 @@ if ($note_id > 0) {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>TaskMate — Note Editor</title>
 
-  <!-- Bootstrap 5 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
@@ -87,7 +84,6 @@ if ($note_id > 0) {
     </div>
 
     <div class="d-flex flex-wrap gap-2 align-items-center">
-      <!-- IMPORTANT: action goes to notes-save.php -->
       <form id="note-form" action="notes-save.php" method="POST" class="m-0">
         <?php if ($note_id > 0): ?>
           <!-- Hidden id to tell save.php to UPDATE -->
@@ -130,7 +126,7 @@ if ($note_id > 0) {
     </div>
   </div>
 
-  </form> <!-- close form -->
+  </form>
 </main>
 
 <?php include("footer.php");?>

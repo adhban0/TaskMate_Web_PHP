@@ -3,13 +3,10 @@ require_once 'config.php';
 if (!isLoggedIn()) { redirect('login.php'); }
 
 $user_id = $_SESSION['id'];
-// Get ID from URL
 $task_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
-// Handle the Update logic BEFORE fetching the (old) data
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_task'])) {
     $new_title = mysqli_real_escape_string($conn, $_POST['taskTitle']);
-    // If date is empty, we store NULL in the database
     $new_date = !empty($_POST['taskDate']) ? "'" . mysqli_real_escape_string($conn, $_POST['taskDate']) . "'" : "NULL";
 
     $update_sql = "UPDATE todos SET title = '$new_title', due_date = $new_date 

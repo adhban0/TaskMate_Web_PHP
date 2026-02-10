@@ -4,13 +4,9 @@ $error = '';
 $success = true;
 $email_error= '';
 $password_error= '';
-// Handle login form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-  // changable (add validation)
-    // 1. Sanitize user input
     $email = trim($_POST['email']);
     $password = trim($_POST['password']);
-    //print_r($_POST);
     if (empty($email)){
       $email_error = 'Email is required.';
       $success = false;
@@ -20,51 +16,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       $success = false;
     }
     if ($success){
-    // Query to fetch the admin row based only on email, including the new 'status' column
     $query = "SELECT id, email, password_hash, country_code, created_at FROM users WHERE email = ?";
-    
-    // Prepare the statement
     $stmt = mysqli_prepare($conn, $query);
     
     if ($stmt === false) {
         die('Prepare failed: ' . mysqli_error($conn));
     }
     
-    // Bind the email parameter (s = string)
     mysqli_stmt_bind_param($stmt, 's', $email);
     
-    // Execute the statement
     mysqli_stmt_execute($stmt);
     
-    // Get the result set
     $result = mysqli_stmt_get_result($stmt);
 
     if (mysqli_num_rows($result) == 1) {
         $user = mysqli_fetch_assoc($result);
         
-        // 2. Verify Password securely (assuming passwords are hashed with password_hash())
         if (password_verify($password, $user['password_hash'])) {
             
-            // Login successful: Set session variables including the status
             $_SESSION['id'] = $user['id'];
             $_SESSION['email'] = $user['email'];
-            // 3. Check the status for redirection
 
-                redirect('dash.php'); // Admin role: Go to dashboard
+                redirect('dash.php');
            
-                // Non-admin role or other users: Go back to the index/home page
             
             
         } else {
-            // Password mismatch
             $error = 'Invalid email or password!';
         }
     } else {
-        // email not found
+ 
         $error = 'Invalid email or password!';
     }
     
-    // Close the statement
     mysqli_stmt_close($stmt);}
 }
 
@@ -128,9 +112,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body class="d-flex flex-column min-vh-100">
 <?php include ("credentialsheader.php");?>
 
-  <!-- Top navbar -->
-
-  <!-- Main content -->
   <main class="flex-grow-1 d-flex align-items-center">
     <div class="container">
       <div class="row justify-content-center">
@@ -149,7 +130,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <?php endif; ?>
 
               <form id="login-form" method="POST" action="">
-                <!-- Email -->
                 <div class="mb-3">
                   <label class="form-label small text-muted-2">Email address</label>
                   <span id="email_error"><?php echo $email_error;?></span>
@@ -162,7 +142,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                   />
                 </div>
 
-                <!-- Password -->
                 <div class="mb-3">
                   <label class="form-label small text-muted-2">Password</label>
                   <span id="password_error"><?php echo $password_error;?></span>
@@ -196,7 +175,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
   </main>
 
-  <!-- Footer -->
 
 <?php include ("footer.php");?>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

@@ -60,7 +60,7 @@ if ($tasks_result) {
                         </div>
                         <div class="mb-3">
                             <label class="small text-muted">Due Date</label>
-                            <input type="date" id= "taskDate" name="taskDate" value ='' class="form-control">
+                            <input type="date" id= "taskDate" name="taskDate" class="form-control">
                         </div>
                         <button type="submit" class="btn btn-dark w-100">Add Task</button>
                     </form>
