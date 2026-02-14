@@ -15,7 +15,7 @@ $title   = isset($_POST['noteTitle']) ? trim($_POST['noteTitle']) : "";
 $content = isset($_POST['noteContent']) ? trim($_POST['noteContent']) : "";
 
 if (empty($content)) {
-    redirect('editor.php' . ($note_id > 0 ? '?id=' . $note_id : ''));
+    redirect('editor.php' . ($note_id > 0 ? '?id=' . $note_id . '&error=notitle': '?error=notitle'));
 }
 
 

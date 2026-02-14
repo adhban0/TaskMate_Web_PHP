@@ -3,7 +3,7 @@ require_once 'config.php';
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['taskTitle'])) {
     $title = mysqli_real_escape_string($conn, $_POST['taskTitle']);
     if (empty($title)){
-        redirect('to-do-list.php');
+        redirect('to-do-list.php?error=notitle');
     }
     $due_date = !empty($_POST['taskDate']) ? "'" . mysqli_real_escape_string($conn, $_POST['taskDate']) . "'" : "NULL";
     $user_id = $_SESSION['id'];

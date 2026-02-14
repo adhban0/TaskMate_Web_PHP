@@ -4,10 +4,15 @@ if (!isLoggedIn()) { redirect('login.php'); }
 
 $user_id = $_SESSION['id'];
 $task_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$error = isset($_GET['error']) ? 'Title is required' : '';
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_task'])) {
     $new_title = mysqli_real_escape_string($conn, $_POST['taskTitle']);
     $new_date = !empty($_POST['taskDate']) ? "'" . mysqli_real_escape_string($conn, $_POST['taskDate']) . "'" : "NULL";
+        if (empty($new_title)){
+        redirect('to-do-list-edittask.php?error=notitle&id='.$task_id);
+    }
 
     $update_sql = "UPDATE todos SET title = '$new_title', due_date = $new_date 
                    WHERE id = $task_id AND user_id = $user_id";
@@ -45,9 +50,9 @@ if (!$task) {
                     
                     <form action="to-do-list-edittask.php?id=<?php echo $task_id; ?>" method="POST">
                         <div class="mb-3">
-                            <label class="form-label small fw-bold">Task Title</label>
+                            <label class="form-label small fw-bold">Task Title</label><span> <?php echo $error;?></span>
                             <input type="text" name="taskTitle" class="form-control" 
-                                   value="<?php echo htmlspecialchars($task['title']); ?>" required>
+                                   value="<?php echo htmlspecialchars($task['title']); ?>" >
                         </div>
                         <div class="mb-4">
                             <label class="form-label small fw-bold">Due Date</label>
@@ -95,7 +100,7 @@ taskForm.addEventListener("submit", function(event) {
   title.value = "";
 
   dueDate.value = "";
-
+taskForm.submit();
 });
     </script>
 </body>

@@ -16,7 +16,7 @@ $tasks_query = "SELECT id, title, due_date, is_completed
                ORDER BY due_date ASC, id DESC LIMIT 5";
 $events_query = "SELECT id, title, event_date, event_time
                FROM calendar_events
-               WHERE user_id = $user_id and event_date >= $todayStr
+               WHERE user_id = $user_id and event_date >= '$todayStr'
                ORDER BY event_date ASC, id DESC LIMIT 5";
 
 $tasks_result = mysqli_query($conn, $tasks_query);
@@ -54,7 +54,6 @@ if (!empty(trim($task_list_string))) {
     $prompt .= "Here are my top 5 upcoming tasks:\n" . $task_list_string . "\n";
 }
 
-// Add events only if they exist
 if (!empty(trim($events_list_string))) {
     $prompt .= "Here are my top 5 upcoming events on the calendar:\n" . $events_list_string . "\n";
 }
@@ -175,6 +174,7 @@ $prompt .= "Give me a 2-sentence productivity plan and tell me which one to focu
         <h5 class="mb-2">AI summary</h5>
         <div class="small text-muted-2 mb-2">Your next best actions:</div>
         <div class="p-3 bg-white rounded-3 border flex-grow-1">
+          <!-- changes new lines to linebreaks in html -->
           <?php echo nl2br(htmlspecialchars($ai_summary)); ?>
         </div>
       </div>

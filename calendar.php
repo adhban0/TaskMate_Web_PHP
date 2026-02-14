@@ -52,7 +52,7 @@ if (!$error){
               SET title = ?, event_date = ?, event_time = ?, description = ?
               WHERE id = ? AND user_id = ?";
       $stmt = mysqli_prepare($conn,$sql);
-      mysqli_stmt_bind_param($stmt, $title, $event_date, $event_time_db, $description_db, $id, $user_id);
+      mysqli_stmt_bind_param($stmt, "ssssii", $title, $event_date, $event_time_db, $description_db, $id, $user_id);
       mysqli_stmt_execute( $stmt );
 
       redirect("calendar.php?ym=" . urlencode($returnYm));
@@ -686,12 +686,28 @@ document.getElementById("addEventModal").addEventListener("hidden.bs.modal", () 
 
 
   </script>
-  <?php if ($error): ?>
+<?php if ($error): ?>
 <script>
-  const modal = new bootstrap.Modal(document.getElementById("addEventModal"));
-  modal.show();
+document.addEventListener("DOMContentLoaded", function() {
+
+  const action = "<?php echo $_POST['action'] ?? 'create'; ?>";
+
+  if (action === "update") {
+    openEditFromDataset({
+      id: "<?php echo (int)($_POST['id'] ?? 0); ?>",
+      title: <?php echo json_encode($_POST['title'] ?? ''); ?>,
+      date: <?php echo json_encode($_POST['event_date'] ?? ''); ?>,
+      time: <?php echo json_encode($_POST['event_time'] ?? ''); ?>,
+      notes: <?php echo json_encode($_POST['description'] ?? ''); ?>
+    });
+  } else {
+    openCreate(<?php echo json_encode($_POST['event_date'] ?? ''); ?>);
+  }
+
+});
 </script>
 <?php endif; ?>
+
 
 </body>
 </html>

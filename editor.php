@@ -10,6 +10,7 @@ $note_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 $noteTitle = "";
 $noteContent = "";
+$error = isset($_GET['error']) ? 'Content is required' : '';
 
 // If editing, load note data 
 if ($note_id > 0) {
@@ -106,12 +107,12 @@ if ($note_id > 0) {
             <input
               class="form-control form-control-lg"
               name="noteTitle"
-              value="<?php echo htmlspecialchars($noteTitle, ENT_QUOTES, 'UTF-8'); ?>"
+              value="<?php echo htmlspecialchars($noteTitle); ?>"
             />
           </div>
 
           <label class="form-label small text-muted-2 mb-1">
-            Content <span id="note_error"></span>
+            Content <span id="note_error"><span> <?php echo $error;?></span>
           </label>
 
           <textarea
@@ -119,7 +120,8 @@ if ($note_id > 0) {
             rows="14"
             id="form-note"
             name="noteContent"
-          ><?php echo htmlspecialchars($noteContent, ENT_QUOTES, 'UTF-8'); ?></textarea>
+            required
+          ><?php echo htmlspecialchars($noteContent); ?></textarea>
 
         </div>
       </div>

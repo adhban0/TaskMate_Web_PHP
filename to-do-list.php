@@ -8,6 +8,7 @@ $user_id = $_SESSION['id'];
 $tasks = [];
 
 $filter = isset($_GET['filter']) ? $_GET['filter'] : 'all';
+$error = isset($_GET['error']) ? 'Title is required' : '';
 
 $where_completed = "";
 if ($filter === "completed") {
@@ -55,7 +56,7 @@ if ($tasks_result) {
                     <h5 class="mb-3">Add new task</h5>
                     <form id="taskForm" action="to-do-list-addtask.php" method="POST">
                         <div class="mb-2">
-                            <label class="small text-muted">Task Title</label>
+                            <label class="small text-muted">Task Title</label><span> <?php echo $error;?></span>
                             <input type="text" id= "taskTitle" name="taskTitle" class="form-control" required placeholder="What needs doing?">
                         </div>
                         <div class="mb-3">
@@ -149,7 +150,7 @@ taskForm.addEventListener("submit", function(event) {
   title.value = "";
 
   dueDate.value = "";
-
+taskForm.submit();
 });
 
     </script>
