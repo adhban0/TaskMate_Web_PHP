@@ -4,7 +4,7 @@ define('DB_HOST', 'localhost');
 define('DB_USER', 'root');
 define('DB_PASS', '');
 define('DB_NAME', 'taskmate');
-$key = '457eac20-49d0-4359-9580-be60f7c7e71b'; 
+$key = ''; 
 require_once __DIR__ . '/vendor/autoload.php';
 $holiday_api = new \HolidayAPI\Client(['key' => $key]);
 function seedUserHolidays(mysqli $conn, array $apiResponse, int $targetYear)
