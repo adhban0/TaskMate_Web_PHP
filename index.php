@@ -36,7 +36,8 @@ if ($events_result) {
 $ai_summary = "No tasks/events found to analyze.";
 
 if (!empty($tasks) || !empty($events)) {
-    $apiKey = "AIzaSyCIl6TtnqbFrTAJ0bYd9IlMoY5HXbxez9I"; 
+    require_once 'apikey.php';
+    $apiKey = return_gemini_api_key(); 
 $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=" . $apiKey;
 
     $task_list_string = "";
