@@ -100,20 +100,33 @@ if (empty($country_code)) {
                 } else {
 mysqli_stmt_bind_param($stmt_insert, 'sss', $email, $hashed_password, $country_code);
                     
-                    if (mysqli_stmt_execute($stmt_insert)) {
+                    // if (mysqli_stmt_execute($stmt_insert)) {
                         
-                        $new_user_id = mysqli_insert_id($conn);
+                        // $new_user_id = mysqli_insert_id($conn);
                         $yearNow = (int)date('Y');
-                         
+                         try{
                         $holidays = $holiday_api->holidays([
                             'country' => $country_code,
                             'year'    => '2025',
                             'public'  => true,
                         ]);
-                        seedUserHolidays($conn, $new_user_id, $holidays, $yearNow);
+                        $holidaysNow = seedUserHolidays($conn,  $holidays, $yearNow);
+                        $holidaysNext = seedUserHolidays($conn,  $holidays, $yearNow + 1);
+                        if ($holidaysNow && $holidaysNext){
+                     if (mysqli_stmt_execute($stmt_insert)) {
+                                              $new_user_id = mysqli_insert_id($conn);
+    $sql = "INSERT INTO calendar_events
+            (user_id, title, event_date)
+            VALUES (?, ?, ?)";
 
-
-                        seedUserHolidays($conn, $new_user_id, $holidays, $yearNow + 1);
+    $stmt = mysqli_prepare($conn, $sql);
+    // if (!$stmt) return;
+            foreach ($holidaysNow as $h){
+            mysqli_stmt_bind_param($stmt,'iss', $new_user_id, $h['title'], $h['date']);
+        $stmt->execute();}
+                    foreach ($holidaysNext as $h){
+            mysqli_stmt_bind_param($stmt,'iss', $new_user_id, $h['title'], $h['date']);
+        $stmt->execute();}
 
                         $_SESSION['id'] = $new_user_id;
                         
@@ -121,15 +134,19 @@ mysqli_stmt_bind_param($stmt_insert, 'sss', $email, $hashed_password, $country_c
                         
                         redirect('index.php'); 
                         
-                    } else {
+                    }} else {
                         $error = 'Registration failed: ' . mysqli_error($conn);
                     }
                     mysqli_stmt_close($stmt_insert);
                 }
+                
+                        catch (Exception $e) {
+    $error = 'Registration failed';
+}
             }
         }
     }
-}
+}}
 ?>
 
 <!doctype html>

@@ -7,24 +7,24 @@ define('DB_NAME', 'taskmate');
 $key = '457eac20-49d0-4359-9580-be60f7c7e71b'; 
 require_once __DIR__ . '/vendor/autoload.php';
 $holiday_api = new \HolidayAPI\Client(['key' => $key]);
-function seedUserHolidays(mysqli $conn, int $user_id, array $apiResponse, int $targetYear): void
+function seedUserHolidays(mysqli $conn, array $apiResponse, int $targetYear)
 {
     if (
         empty($apiResponse) ||
         !isset($apiResponse['holidays']) ||
         !is_array($apiResponse['holidays'])
     ) {
-        return;
+        return null;
     }
-
+    $holidays = [];
     
 
-    $sql = "INSERT INTO calendar_events
-            (user_id, title, event_date)
-            VALUES (?, ?, ?)";
+    // $sql = "INSERT INTO calendar_events
+    //         (user_id, title, event_date)
+    //         VALUES (?, ?, ?)";
 
-    $stmt = mysqli_prepare($conn, $sql);
-    if (!$stmt) return;
+    // $stmt = mysqli_prepare($conn, $sql);
+    // if (!$stmt) return;
 
     foreach ($apiResponse['holidays'] as $h) {
         $title = $h['name'] ?? null;
@@ -42,17 +42,15 @@ function seedUserHolidays(mysqli $conn, int $user_id, array $apiResponse, int $t
         if (!checkdate((int)$month, (int)$day, $targetYear)) {
             continue;
         }
+        $holidays[] = array("title" => $title, "date" => $newDate);
 
 
 
 
-
-
-        mysqli_stmt_bind_param($stmt,'iss', $user_id, $title, $newDate);
-        $stmt->execute();
+        // mysqli_stmt_bind_param($stmt,'iss', $user_id, $title, $newDate);
+        // $stmt->execute();
     }
-
-    mysqli_stmt_execute($stmt);
+return $holidays;
 }
 
 
